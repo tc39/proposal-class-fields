@@ -728,9 +728,9 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _fieldName_ be the result of evaluating |ClassElementName|.
-    1. If |Initializer?| is present,
+    1. If |Initializer_opt| is present,
       1. Let _lex_ be the Lexical Environment of the running execution context.
-      1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer?|, _lex_, *true*).
+      1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer|, _lex_, *true*).
       1. Perform MakeMethod(_initializer_, _homeObject_).
     1. Else, let _initializer_ be ~empty~.
     1. If _fieldName_ is a Private Name, set _fieldName_.[[PrivateNameType]] to ~field~.
