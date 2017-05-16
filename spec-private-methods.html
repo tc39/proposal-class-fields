@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf8">
 <pre class=metadata>
-title: Integrated public and private fields proposal
+title: Integrated public and private fields and methods proposal
 stage: 2
 contributors: Daniel Ehrenberg, Jeff Morrison, Kevin Smith, Kevin Gibbons
 </pre>
@@ -124,6 +124,19 @@ emu-example pre {
         MetaProperty
         `new` MemberExpression[?Yield, ?Await] Arguments[?Yield, ?Await]
         <ins>MemberExpression[?Yield, ?Await] `.` PrivateName</ins>
+
+      MethodDefinition[Yield, Await] :
+        <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[~Yield, ~Await] `)` `{` FunctionBody[~Yield, ~Await] `}`
+        GeneratorMethod[?Yield, ?Await]
+        AsyncMethod[?Yield, ?Await]
+        `get` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` `)` `{` FunctionBody[~Yield, ~Await] `}`
+        `set` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` PropertySetParameterList `)` `{` FunctionBody[~Yield, ~Await] `}`
+
+      GeneratorMethod[Yield, Await] :
+        `*` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[+Yield, ~Await] `)` `{` GeneratorBody `}`
+
+      AsyncMethod[Yield, Await] :
+        `async` [no LineTerminator here] <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[~Yield, +Await] `)` `{` AsyncFunctionBody `}`
     </emu-grammar>
   </emu-clause>
 
@@ -141,7 +154,7 @@ emu-example pre {
       ClassBody : ClassElementList
     </emu-grammar>
     <ul>
-      <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries.</li>
+      <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries, unless the name is used once for a getter and once for a setter.</li>
     </ul>
 
     <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
@@ -172,6 +185,12 @@ emu-example pre {
     </emu-note>
     <emu-note editor>Private fields may not be deleted</emu-note>
 
+    <emu-grammar>PropertyDefinition : MethodDefinition</emu-grammar>
+    <ul>
+      <li>It is a Syntax Error if PrivateBoundNames of |MethodDefinition| is non-empty</li>
+    </ul>
+    <emu-note editor>In a follow-on proposal, object literals may be permitted to have private methods, fields and accessors.</emu-note>
+
     <emu-grammar>Script : ScriptBody?</emu-grammar>
     <emu-alg>
       1. Let _names_ be an empty List.
@@ -185,7 +204,7 @@ emu-example pre {
     </emu-alg>
     <emu-grammar>Module : ModuleBody?</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with ane empty List as an argument is *false*.</li>
+      <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with an empty List as an argument is *false*.</li>
     </ul>
     <emu-note editor>References to PrivateNames which are not lexically present cause an early error. PrivateNames with or without an explicit receiver are treated identically, see <a href="https://github.com/tc39/proposal-private-fields/issues/23">bug thread</a> where a stricter policy was proposed and rejected.</emu-note>
   <emu-clause id="sec-all-private-names-valid" aoid="AllPrivateNamesValid">
@@ -263,10 +282,15 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateName|.
-    1. Let _field_ be NewPrivateName();
     1. Let _scope_ be the running execution context's PrivateNameEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
-    1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
+    1. Assert: _scopeEnvRec_ has a binding for _bindingName_.
+    1. If _scopeEnvRec_'s binding for _bindingName_ is uninitialized,
+      1. Let _field_ be NewPrivateName().
+      1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
+    1. Otherwise,
+      1. Let _field_ be _scopeEnvRec_.GetBindingValue(_bindingName_).
+      1. NOTE: The only case where this may occur is in getter/setter pairs; other duplicates are prohibited as a Syntax Error.
     1. Return _field_.
   </emu-alg>
   <emu-note editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
@@ -320,6 +344,7 @@ emu-example pre {
       1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer?|, _lex_, *true*).
       1. Perform MakeMethod(_initializer_, _homeObject_).
     1. Else, let _initializer_ be ~empty~.
+    1. If _fieldName_ is a Private Name, set _fieldName_.[[PrivateNameType]] to ~field~.
     1. Return Record {
          [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
@@ -353,6 +378,7 @@ emu-example pre {
       1. Let _initValue_ be ? Call(_initializer_, *undefined*).
     1. Else, let _initValue_ be *undefined*.
     1. If _name_ is a Private Name,
+      1. Assert: _name_.[[PrivateNameType]] is ~field~.
       1. Perform ? PrivateFieldAdd(_name_, _O_, _initialValue_).
     1. Otherwise, _name_ is a property key,
       1. Let _desc_ be PropertyDescriptor{
@@ -452,7 +478,42 @@ emu-example pre {
     ClassElement : MethodDefinition
 
     ClassElement : `static` MethodDefinition
+  </emu-grammar>
+  <emu-alg>
+    1. Return PrivateBoundNames of |MethodDefinition|.
+  </emu-alg>
 
+  <emu-grammar>
+      MethodDefinition[Yield, Await] :
+        <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[~Yield, ~Await] `)` `{` FunctionBody[~Yield, ~Await] `}`
+        `get` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` `)` `{` FunctionBody[~Yield, ~Await] `}`
+        `set` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` PropertySetParameterList `)` `{` FunctionBody[~Yield, ~Await] `}`
+
+      GeneratorMethod[Yield, Await] :
+        `*` <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[+Yield, ~Await] `)` `{` GeneratorBody `}`
+
+      AsyncMethod[Yield, Await] :
+        `async` [no LineTerminator here] <del>PropertyName</del><ins>ClassElementName</ins>[?Yield, ?Await] `(` UniqueFormalParameters[~Yield, +Await] `)` `{` AsyncFunctionBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return PrivateBoundNames of |ClassElementName|.
+  </emu-alg>
+
+  <emu-grammar>
+      MethodDefinition[Yield, Await] : GeneratorMethod[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Return PrivateBoundNames of |GeneratorMethod|.
+  </emu-alg>
+
+  <emu-grammar>
+      MethodDefinition[Yield, Await] : AsyncMethod[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Return PrivateBoundNames of |AsyncMethod|.
+  </emu-alg>
+
+  <emu-grammar>
     ClassElement : `;`
   </emu-grammar>
   <emu-alg>
@@ -582,6 +643,108 @@ emu-example pre {
       1. Return _F_.
     </emu-alg>
   </emu-clause>
+
+  <!-- es6num="14.3.9" -->
+  <emu-clause id="sec-method-definitions-runtime-semantics-propertydefinitionevaluation">
+    <h1>Runtime Semantics: PropertyDefinitionEvaluation</h1>
+    <p>With parameters _object_ and _enumerable_.</p>
+    <emu-see-also-para op="PropertyDefinitionEvaluation"></emu-see-also-para>
+    <emu-grammar>MethodDefinition : PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _methodDef_ be DefineMethod of |MethodDefinition| with argument _object_.
+      1. ReturnIfAbrupt(_methodDef_).
+      1. <ins>If _methodDef_.[[Key]] is a Private Name</ins>
+        1. <ins>Perform SetFunctionName(_methodDef_.[[Closure]], StringValue of _methodDef_.[[Key]]).</ins>
+        1. <ins>Assert: _methodDef_.[[Key]] does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
+        1. <ins>Set _methodDef_.[[Key]].[[PrivateNameType]] to ~method~.</ins>
+        1. <ins>Set _methodDef_.[[Key]].[[PrivateNameMethod]] to _methodDef_.[[Closure]].</ins>
+        1. <ins>Return NormalCompletion(~empty~).</ins>
+      1. Perform SetFunctionName(_methodDef_.[[Closure]], _methodDef_.[[Key]]).
+      1. Let _desc_ be the PropertyDescriptor{[[Value]]: _methodDef_.[[Closure]], [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
+      1. Return ? DefinePropertyOrThrow(_object_, _methodDef_.[[Key]], _desc_).
+    </emu-alg>
+    <emu-grammar>MethodDefinition : `get` PropertyName `(` `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _propKey_ be the result of evaluating |PropertyName|.
+      1. ReturnIfAbrupt(_propKey_).
+      1. If the function code for this |MethodDefinition| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
+      1. Let _scope_ be the running execution context's LexicalEnvironment.
+      1. Let _formalParameterList_ be an instance of the production <emu-grammar>FormalParameters : [empty]</emu-grammar>.
+      1. Let _closure_ be FunctionCreate(~Method~, _formalParameterList_, |FunctionBody|, _scope_, _strict_).
+      1. Perform MakeMethod(_closure_, _object_).
+      1. <ins>If _propKey_ is a Private Name</ins>
+        1. <ins>Perform SetFunctionName(_methodDef_.[[Closure]], StringValue of _propKey_, `"get"`).</ins>
+        1. <ins>If _propKey_.[[PrivateNameType]] does not exist,
+          1. <ins>Set _propKey_.[[PrivateNameType]] to ~accessor~.
+        1. <ins>Otherwise, Assert: _propKey_.[[PrivateNameType]] is already ~accessor~.</ins>
+        1. <ins>Assert: _propKey_ does not have the internal slot [[PrivateNameGetter]].</ins>
+        1. <ins>Set _propKey_.[[PrivateNameGetter]] to _methodDef_.[[Closure]].</ins>
+        1. <ins>Return NormalCompletion(~empty~).</ins>
+      1. Perform SetFunctionName(_closure_, _propKey_, `"get"`).
+      1. Let _desc_ be the PropertyDescriptor{[[Get]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
+      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+    </emu-alg>
+    <emu-grammar>MethodDefinition : `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _propKey_ be the result of evaluating |PropertyName|.
+      1. ReturnIfAbrupt(_propKey_).
+      1. If the function code for this |MethodDefinition| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
+      1. Let _scope_ be the running execution context's LexicalEnvironment.
+      1. Let _closure_ be FunctionCreate(~Method~, |PropertySetParameterList|, |FunctionBody|, _scope_, _strict_).
+      1. Perform MakeMethod(_closure_, _object_).
+      1. <ins>If _propKey_ is a Private Name</ins>
+        1. <ins>Perform SetFunctionName(_methodDef_.[[Closure]], StringValue of _propKey_, `"get"`).</ins>
+        1. <ins>If _propKey_.[[PrivateNameType]] does not exist,
+          1. <ins>Set _propKey_.[[PrivateNameType]] to ~accessor~.
+        1. <ins>Otherwise, Assert: _propKey_.[[PrivateNameType]] is already ~accessor~.</ins>
+        1. <ins>Assert: _propKey_ does not have the internal slot [[PrivateNameSetter]].</ins>
+        1. <ins>Set _propKey_.[[PrivateNameSetter]] to _methodDef_.[[Closure]].</ins>
+        1. <ins>Return NormalCompletion(~empty~).</ins>
+      1. Perform SetFunctionName(_closure_, _propKey_, `"set"`).
+      1. Let _desc_ be the PropertyDescriptor{[[Set]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
+      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+    </emu-alg>
+    <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _propKey_ be the result of evaluating |PropertyName|.
+      1. ReturnIfAbrupt(_propKey_).
+      1. If the function code for this |GeneratorMethod| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
+      1. Let _scope_ be the running execution context's LexicalEnvironment.
+      1. Let _closure_ be GeneratorFunctionCreate(~Method~, |UniqueFormalParameters|, |GeneratorBody|, _scope_, _strict_).
+      1. Perform MakeMethod(_closure_, _object_).
+      1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
+      1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
+      1. <ins>If _propKey_ is a Private Name</ins>
+        1. <ins>Perform SetFunctionName(_closure_, StringValue of _propKey_).</ins>
+        1. <ins>Assert: _propKey_ does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
+        1. <ins>Set _propKey_.[[PrivateNameType]] to ~method~.</ins>
+        1. <ins>Set _propKey_.[[PrivateNameMethod]] to _closure_.</ins>
+        1. <ins>Return NormalCompletion(~empty~).</ins>
+      1. Perform SetFunctionName(_closure_, _propKey_).
+      1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
+      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+    </emu-alg>
+    <emu-grammar>
+      AsyncMethod : `async` [no LineTerminator here] PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _propKey_ be the result of evaluating |PropertyName|.
+      1. ReturnIfAbrupt(_propKey_).
+      1. If the function code for this |AsyncMethod| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _closure_ be ! AsyncFunctionCreate(~Method~, |UniqueFormalParameters|, |AsyncFunctionBody|, _scope_, _strict_).
+      1. Perform ! MakeMethod(_closure_, _object_).
+      1. <ins>If _propKey_ is a Private Name</ins>
+        1. <ins>Perform SetFunctionName(_closure_, StringValue of _propKey_).</ins>
+        1. <ins>Assert: _propKey_ does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
+        1. <ins>Set _propKey_.[[PrivateNameType]] to ~method~.</ins>
+        1. <ins>Set _propKey_.[[PrivateNameMethod]] to _closure_.</ins>
+        1. <ins>Return NormalCompletion(~empty~).</ins>
+      1. Perform ! SetFunctionName(_closure_, _propKey_).
+      1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
+      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+    </emu-alg>
+  </emu-clause>
 </emu-clause>
 
 <emu-clause id="[[construct]]">
@@ -681,6 +844,20 @@ emu-example pre {
 
 <p>All ECMAScript objects have a new additional internal slot, [[PrivateFieldValues]], which is a List of Records of the form { [[PrivateName]]: Private Name, [[PrivateFieldValue]]: ECMAScript value }. This List represents the values of the private fields for the object. All objects, including Proxies and all host environment-provided objects, have this internal slot, but primitives such as Numbers do not.</p>
 
+<p>Private Names can point to fields, methods or accessors. To model this, they have write-once internal slots which determine their behavior:<p>
+<ul>
+<li>[[PrivateNameType]]: Either ~field~, ~method~ or ~accessor~.</li>
+<li>If the [[PrivateNameType]] is ~method~:
+<ul>
+<li>[[PrivateNameMethod]]: A Function object which is the method.</li>
+</ul></li>
+<li>If the [[PrivateNameType]] is ~accessor~:
+<ul>
+<li>[[PrivateNameGetter]]: A Function object which is called from GetValue.</li>
+<li>[[PrivateNameSetter]]: A Function object which is called from PutValue.</li>
+</ul></li>
+</ul>
+
 <emu-note editor>
 <p>
   Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, PrivateNameIdentifiers specifically do not have this connotation: because the reference from the Identifier to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the identifier.
@@ -760,6 +937,36 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
+<emu-clause id="sec-privateget" aoid="PrivateGet">
+  <h1>PrivateGet (_P_, _O_ )</h1>
+  <emu-alg>
+    1. Assert: _P_ is a Private Name value.
+    1. If _O_ is not an object, throw a *TypeError* exception.
+    1. If _P_.[[PrivateNameType]] is ~field~,
+      1. Return ? PrivateFieldGet(_P_, _O_).
+    1. Otherwise, if _P_.[[PrivateNameType]] is ~method~,
+      1. Return _P_.[[PrivateNameMethod]].
+    1. Otherwise, _P_.[[PrivateNameType]] is ~accessor~,
+      1. If _P_ does not have a [[PrivateNameGetter]] internal slot, throw a *TypeError* exception.
+      1. Return ? Call(_P_.[[PrivateNameGetter]], _O_).
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-privateset" aoid="PrivateSet">
+  <h1>PrivateSet (_P_, _O_, _value_ )</h1>
+  <emu-alg>
+    1. Assert: _P_ is a Private Name value.
+    1. If _O_ is not an object, throw a *TypeError* exception.
+    1. If _P_.[[PrivateNameType]] is ~field~,
+      1. Return ? PrivateFieldSet(_P_, _O_, _value_).
+    1. Otherwise if _P_.[[PrivateNameType]] is ~method~,
+      1. Throw a *TypeError* exception.
+    1. Otherwise, _P_.[[PrivateNameType]] is ~accessor~,
+      1. If _P_ does not have a [[PrivateNameSetter]] internal slot, throw a *TypeError* exception.
+      1. Return ? Call(_P_.[[PrivateNameSetter]], _O_, _V_).
+  </emu-alg>
+</emu-clause>
+
 <emu-clause id="sec-private-references-runtime-semantics-evaluation">
   <h1>Runtime Semantics: Evaluation</h1>
   <emu-grammar>MemberExpression : MemberExpression `.` PrivateName</emu-grammar>
@@ -824,7 +1031,7 @@ emu-example pre {
           1. <ins>Let _env_ be the running execution context's PrivateNameEnvironment.</ins>
           1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
           1. <ins>Assert: _field_ is a Private Name.</ins>
-          1. <ins>Return ? PrivateFieldGet(_field_, _base_).</ins>
+          1. <ins>Return ? PrivateGet(_field_, _base_).</ins>
         1. Return ? _base_.[[Get]](GetReferencedName(_V_), GetThisValue(_V_)).
       1. Else _base_ must be an Environment Record,
         1. Return ? _base_.GetBindingValue(GetReferencedName(_V_), IsStrictReference(_V_)) (see <emu-xref href="#sec-environment-records"></emu-xref>).
@@ -855,7 +1062,7 @@ emu-example pre {
           1. <ins>Let _env_ be the running execution context's PrivateNameEnvironment.</ins>
           1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
           1. <ins>Assert: _field_ is a Private Name.</ins>
-          1. <ins>Perform ? PrivateFieldSet(_field_, _base_, _W_).</ins>
+          1. <ins>Perform ? PrivateSet(_field_, _base_, _W_).</ins>
         1. Else,
           1. Let _succeeded_ be ? _base_.[[Set]](GetReferencedName(_V_), _W_, GetThisValue(_V_)).
           1. If _succeeded_ is *false* and IsStrictReference(_V_) is *true*, throw a *TypeError* exception.
