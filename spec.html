@@ -249,33 +249,6 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="static-semantics-class-fields">
-  <h1>Static Semantics: ClassFields</h1>
-
-  <emu-grammar>ClassElementList: ClassElement</emu-grammar>
-  <emu-alg>
-    1. If |ClassElement| is the production 
-       <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>, return
-       a List containing |ClassElement|.
-    1. If |ClassElement| is the production 
-       <emu-grammar>ClassElement : static FieldDefinitionList</emu-grammar>, 
-       return a List containing |ClassElement|.
-    1. Return a new empty List.
-  </emu-alg>
-
-  <emu-grammar>ClassElementList: ClassElementList ClassElement</emu-grammar>
-  <emu-alg>
-    1. Let _list_ be ClassFields of |ClassElementList|.
-    1. If |ClassElement| is the production
-       <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>, append
-       |ClassElement| to the end of _list_.
-    1. If |ClassElement| is the production
-       <emu-grammar>ClassElement : static FieldDefinitionList</emu-grammar>, 
-       append |ClassElement| to the end of _list_.
-    1. Return _list_.
-  </emu-alg>
-</emu-clause>
-
 <emu-clause id="sec-runtime-semantics-evaluate-name">
   <h1>Runtime Semantics: Evaluation</h1>
   <emu-grammar>
@@ -298,6 +271,21 @@ emu-example pre {
   </emu-alg>
   <emu-note editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
+</emu-clause>
+
+<emu-clause id="static-semantics-property-definition-evaluation">
+  <h1>Static Semantics: PropertyDefinitionEvaluation</h1>
+  <p>With parameters _object_ and _enumerable_.</p>
+
+  <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+  <emu-alg>
+    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
+  </emu-alg>
+
+  <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+  <emu-alg>
+    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
+  </emu-alg>
 </emu-clause>
 
 <emu-clause id="runtime-semantics-class-field-definition-evaluation">
@@ -495,17 +483,6 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="sec-private-field-definition-static-semantics-nonconstructormethoddefinitions">
-  <h1>Static Semantics: NonConstructorMethodDefinitions</h1>
-  <emu-grammar>ClassElementList : ClassElement</emu-grammar>
-  <emu-alg>
-    1. If |ClassElement| is the production <emu-grammar>ClassElement : `;`</emu-grammar> , return a new empty List.
-    1. <ins>If |ClassElement| is the production <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar> , return a new empty List</ins>.
-    1. If IsStatic of |ClassElement| is *false* and PropName of |ClassElement| is `"constructor"`, return a new empty List.
-    1. Return a List containing |ClassElement|.
-  </emu-alg>
-</emu-clause>
-
 <emu-clause id="class-definitions">
   <h1>Class Definitions</h1>
 
@@ -579,29 +556,21 @@ emu-example pre {
       1. Perform MakeClassConstructor(_F_).
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
       1. If |ClassBody_opt| is not present, let _methods_ be a new empty List.
-      1. Else, let _methods_ be NonConstructorMethodDefinitions of |ClassBody|.
+      1. Else, let _methods_ be NonConstructorMethodDefinitions of |ClassBody|. <ins>NOTE: _methods_ includes field declarations</ins>
+      1. Let _fieldRecords_ be a new empty List.
       1. For each |ClassElement| _m_ in order from _methods_
         1. If IsStatic of _m_ is *false*, then
-          1. Let _status_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _proto_ and *false*.
+          1. Let _fields_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _proto_ and *false*.
         1. Else,
-          1. Let _status_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _F_ and *false*.
-        1. If _status_ is an abrupt completion, then
+          1. Let _fields_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _F_ and *false*.
+        1. If _fields_ is an abrupt completion, then
           1. Set the running execution context's LexicalEnvironment to _lex_.
           1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
           1. Return Completion(_status_).
+        1. <ins>Append _fields_ to _fieldRecords_</ins>
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
-      1. <ins>If |ClassBody_opt| is not present, let _fields_ be a new empty List.</ins>
-      1. <ins>Else, let _fields_ be the result of performing ClassFields of |ClassBody|.</ins>
-      1. <ins>Let _fieldRecords_ be a new empty List.</ins>
-      1. <ins>For each item _field_ in order from _fields_,</ins>
-        1. <ins>Let _isStatic_ be the result of performing IsStatic of _field_.
-        1. <ins> If _isStatic_, let _homeObject_ be _F_, otherwise let _homeObject_ be _proto_.
-        1. <ins>Let _additionalFieldRecords_ be the result of performing
-           ClassFieldDefinitionEvaluation for _field_ with arguments
-           _isStatic_ and _homeObject_.</ins>
-        1. <ins>Append the elements of _additionalFieldRecords_ to _fieldRecords_.</ins>
       1. <ins>Set the value of _F_'s [[Fields]] internal slot to _fieldRecords_.</ins>
       1. <ins>Set the running execution context's LexicalEnvironment to _classScope_.</ins>
       1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
