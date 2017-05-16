@@ -95,6 +95,8 @@ Note that ESnext provides private fields only as declared up-front in a field de
 
 ## Details of this proposal
 
+See the <a href="http://littledan.github.io/proposal-class-fields/">draft specification</a> for full details.
+
 ### Orthogonality
 
 This proposal provides fields which are orthogonal on the following axes:
