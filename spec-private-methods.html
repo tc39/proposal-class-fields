@@ -296,63 +296,6 @@ emu-example pre {
   <emu-note editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
 </emu-clause>
-
-<emu-clause id="static-semantics-property-definition-evaluation">
-  <h1>Static Semantics: PropertyDefinitionEvaluation</h1>
-  <p>With parameters _object_ and _enumerable_.</p>
-
-  <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
-  <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
-  </emu-alg>
-
-  <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
-  <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
-  </emu-alg>
-</emu-clause>
-
-<emu-clause id="runtime-semantics-class-field-definition-evaluation">
-  <h1>Runtime Semantics: ClassFieldDefinitionEvaluation</h1>
-
-  <p>With parameters _isStatic_ and _homeObject_.</p>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Let _fields_ be ClassFieldDefinitionEvaluation of |FieldDefinitionList|.
-    1. Let _field_ be ClassFieldDefinitionEvaluation of |FieldDefinition|.
-    1. Append _field_ to _fields_.
-    1. Return _fields_.
-  </emu-alg>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Return a List containing ClassFieldDefinitionEvaluation of |FieldDefinition|.
-  </emu-alg>
-
-  <emu-grammar>
-    FieldDefinition : ClassElementName Initializer? ;
-  </emu-grammar>
-  <emu-alg>
-    1. Let _fieldName_ be the result of evaluating |ClassElementName|.
-    1. If |Initializer?| is present,
-      1. Let _lex_ be the Lexical Environment of the running execution context.
-      1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer?|, _lex_, *true*).
-      1. Perform MakeMethod(_initializer_, _homeObject_).
-    1. Else, let _initializer_ be ~empty~.
-    1. If _fieldName_ is a Private Name, set _fieldName_.[[PrivateNameType]] to ~field~.
-    1. Return Record {
-         [[Name]]: _fieldName_, 
-         [[Initializer]]: _initializer_,
-         [[Static]]: _isStatic_,
-       }.
-  </emu-alg>
-</emu-clause>
-
 <emu-clause id="runtime-semantics-class-public-field-definition-evaluation">
   <h1>Runtime Semantics: EvaluateBody</h1>
 
@@ -544,9 +487,6 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="class-definitions">
-  <h1>Class Definitions</h1>
-
   <emu-clause id="static-semantics-is-static">
     <h1>Static Semantics: IsStatic</h1>
 
@@ -658,10 +598,11 @@ emu-example pre {
         1. <ins>Assert: _methodDef_.[[Key]] does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
         1. <ins>Set _methodDef_.[[Key]].[[PrivateNameType]] to ~method~.</ins>
         1. <ins>Set _methodDef_.[[Key]].[[PrivateNameMethod]] to _methodDef_.[[Closure]].</ins>
-        1. <ins>Return NormalCompletion(~empty~).</ins>
+        1. <ins>Return a new empty List.</ins>
       1. Perform SetFunctionName(_methodDef_.[[Closure]], _methodDef_.[[Key]]).
       1. Let _desc_ be the PropertyDescriptor{[[Value]]: _methodDef_.[[Closure]], [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-      1. Return ? DefinePropertyOrThrow(_object_, _methodDef_.[[Key]], _desc_).
+      1. Perform ? DefinePropertyOrThrow(_object_, _methodDef_.[[Key]], _desc_).
+      1. Return a new empty List.
     </emu-alg>
     <emu-grammar>MethodDefinition : `get` PropertyName `(` `)` `{` FunctionBody `}`</emu-grammar>
     <emu-alg>
@@ -679,10 +620,11 @@ emu-example pre {
         1. <ins>Otherwise, Assert: _propKey_.[[PrivateNameType]] is already ~accessor~.</ins>
         1. <ins>Assert: _propKey_ does not have the internal slot [[PrivateNameGetter]].</ins>
         1. <ins>Set _propKey_.[[PrivateNameGetter]] to _methodDef_.[[Closure]].</ins>
-        1. <ins>Return NormalCompletion(~empty~).</ins>
+        1. <ins>Return a new empty List.</ins>
       1. Perform SetFunctionName(_closure_, _propKey_, `"get"`).
       1. Let _desc_ be the PropertyDescriptor{[[Get]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Perform ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Return a new empty List.
     </emu-alg>
     <emu-grammar>MethodDefinition : `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`</emu-grammar>
     <emu-alg>
@@ -699,10 +641,11 @@ emu-example pre {
         1. <ins>Otherwise, Assert: _propKey_.[[PrivateNameType]] is already ~accessor~.</ins>
         1. <ins>Assert: _propKey_ does not have the internal slot [[PrivateNameSetter]].</ins>
         1. <ins>Set _propKey_.[[PrivateNameSetter]] to _methodDef_.[[Closure]].</ins>
-        1. <ins>Return NormalCompletion(~empty~).</ins>
+        1. <ins>Return a new empty List.</ins>
       1. Perform SetFunctionName(_closure_, _propKey_, `"set"`).
       1. Let _desc_ be the PropertyDescriptor{[[Set]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Perform ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Return a new empty List.
     </emu-alg>
     <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
     <emu-alg>
@@ -719,10 +662,11 @@ emu-example pre {
         1. <ins>Assert: _propKey_ does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
         1. <ins>Set _propKey_.[[PrivateNameType]] to ~method~.</ins>
         1. <ins>Set _propKey_.[[PrivateNameMethod]] to _closure_.</ins>
-        1. <ins>Return NormalCompletion(~empty~).</ins>
+        1. <ins>Return a new empty List.</ins>
       1. Perform SetFunctionName(_closure_, _propKey_).
       1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Perform ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Return a new empty List.
     </emu-alg>
     <emu-grammar>
       AsyncMethod : `async` [no LineTerminator here] PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
@@ -739,13 +683,65 @@ emu-example pre {
         1. <ins>Assert: _propKey_ does not have either of the internal slots [[PrivateNameType]] or [[PrivateNameMethod]].</ins>
         1. <ins>Set _propKey_.[[PrivateNameType]] to ~method~.</ins>
         1. <ins>Set _propKey_.[[PrivateNameMethod]] to _closure_.</ins>
-        1. <ins>Return NormalCompletion(~empty~).</ins>
+        1. <ins>Return a new empty List.</ins>
       1. Perform ! SetFunctionName(_closure_, _propKey_).
       1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-      1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Perform ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+      1. Return a new empty List.
     </emu-alg>
-  </emu-clause>
+
+  <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+  <emu-alg>
+    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
+  </emu-alg>
+
+  <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+  <emu-alg>
+    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
+  </emu-alg>
 </emu-clause>
+
+<emu-clause id="runtime-semantics-class-field-definition-evaluation">
+  <h1>Runtime Semantics: ClassFieldDefinitionEvaluation</h1>
+
+  <p>With parameters _isStatic_ and _homeObject_.</p>
+
+  <emu-grammar>
+      FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Let _fields_ be ClassFieldDefinitionEvaluation of |FieldDefinitionList|.
+    1. Let _field_ be ClassFieldDefinitionEvaluation of |FieldDefinition|.
+    1. Append _field_ to _fields_.
+    1. Return _fields_.
+  </emu-alg>
+
+  <emu-grammar>
+      FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Return a List containing ClassFieldDefinitionEvaluation of |FieldDefinition|.
+  </emu-alg>
+
+  <emu-grammar>
+    FieldDefinition : ClassElementName Initializer? ;
+  </emu-grammar>
+  <emu-alg>
+    1. Let _fieldName_ be the result of evaluating |ClassElementName|.
+    1. If |Initializer?| is present,
+      1. Let _lex_ be the Lexical Environment of the running execution context.
+      1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer?|, _lex_, *true*).
+      1. Perform MakeMethod(_initializer_, _homeObject_).
+    1. Else, let _initializer_ be ~empty~.
+    1. If _fieldName_ is a Private Name, set _fieldName_.[[PrivateNameType]] to ~field~.
+    1. Return Record {
+         [[Name]]: _fieldName_,
+         [[Initializer]]: _initializer_,
+         [[Static]]: _isStatic_,
+       }.
+  </emu-alg>
+</emu-clause>
+
 
 <emu-clause id="[[construct]]">
   <h1>[[Construct]] ( _argumentsList_, _newTarget_)</h1>
