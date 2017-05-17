@@ -17,13 +17,13 @@ class Counter extends HTMLElement {
 
   constructor() {
     super();
-    this.onclick = this.#clicked.bind(this);
+    this.onclick = #clicked.bind(this);
   }
 
   connectedCallback() { this.render(); }
 
   render() {
-    this.textContent = this.#x.toString();
+    this.textContent = #x.toString();
   }
 }
 window.customElements.define('num-counter', Counter);
