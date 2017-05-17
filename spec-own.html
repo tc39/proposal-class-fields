@@ -112,7 +112,7 @@ emu-example pre {
       ClassElement[Yield, Await] :
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
-        <ins>FieldDefinitionList[?Yield, ?Await]</ins>
+        <ins>`own` [no LineTerminator here] FieldDefinitionList[?Yield, ?Await]</ins>
         <ins>`static` FieldDefinitionList[?Yield, ?Await]</ins>
 
       MemberExpression[Yield, Await] :
@@ -303,7 +303,7 @@ emu-example pre {
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
   </emu-alg>
 
-  <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+  <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
   </emu-alg>
@@ -511,7 +511,7 @@ emu-example pre {
     <h1>Static Semantics: IsStatic</h1>
 
     <ins class="block">
-      <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+      <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList</emu-grammar>
       <emu-alg>
         1. Return *false*.
       </emu-alg>
