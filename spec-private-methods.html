@@ -94,7 +94,7 @@ emu-example pre {
         PrivateName
 
       FieldDefinition[Yield, Await] :
-        ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]? ;
+        ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]?
 
       FieldDefinitionList[Yield, Await] :
         FieldDefinition[?Yield, ?Await]
@@ -112,8 +112,8 @@ emu-example pre {
       ClassElement[Yield, Await] :
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
-        <ins>FieldDefinitionList[?Yield, ?Await]</ins>
-        <ins>`static` FieldDefinitionList[?Yield, ?Await]</ins>
+        <ins>FieldDefinitionList[?Yield, ?Await] ;</ins>
+        <ins>`static` FieldDefinitionList[?Yield, ?Await] ;</ins>
 
       MemberExpression[Yield, Await] :
         PrimaryExpression[?Yield, ?Await]
@@ -172,7 +172,7 @@ emu-example pre {
       <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries, unless the name is used once for a getter and once for a setter.</li>
     </ul>
 
-    <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+    <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if PropName of |FieldDefinitionList| includes `"prototype"`.
@@ -365,7 +365,7 @@ emu-example pre {
     1. Let _fieldRecords_ be the value of _F_'s [[Fields]] internal slot.
     1. For each item _fieldRecord_ in order from _fieldRecords_,
       1. If _fieldRecord_.[[static]] is *true*, then
-        1. Perform ? DefineField(_F_, _fieldRecord_);
+        1. Perform ? DefineField(_F_, _fieldRecord_).
     1. Return.
   </emu-alg>
 </emu-clause>
@@ -379,7 +379,7 @@ emu-example pre {
     1. Let _fieldRecords_ be the value of _constructor_'s [[Fields]] internal slot.
     1. For each item _fieldRecord_ in order from _fieldRecords_,
       1. If _fieldRecord_.[[static]] is *false*, then
-        1. Perform ? DefineField(_O_, _fieldRecord_);
+        1. Perform ? DefineField(_O_, _fieldRecord_).
     1. Return.
   </emu-alg>
   <emu-note editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
@@ -418,7 +418,7 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-      FieldDefinition : ClassElementName Initializer? ;
+      FieldDefinition : ClassElementName Initializer?
   </emu-grammar>
   <emu-alg>
     1. Return PrivateBoundNames of |ClassElementName|
@@ -711,12 +711,12 @@ emu-example pre {
       1. Return a new empty List.
     </emu-alg>
 
-  <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+  <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
   </emu-alg>
 
-  <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+  <emu-grammar>ClassElement : FieldDefinitionList ;</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
   </emu-alg>

@@ -94,7 +94,7 @@ emu-example pre {
         PrivateName
 
       FieldDefinition[Yield, Await] :
-        ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]? ;
+        ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]?
 
       FieldDefinitionList[Yield, Await] :
         FieldDefinition[?Yield, ?Await]
@@ -112,8 +112,8 @@ emu-example pre {
       ClassElement[Yield, Await] :
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
-        <ins>`own` [no LineTerminator here] FieldDefinitionList[?Yield, ?Await]</ins>
-        <ins>`static` FieldDefinitionList[?Yield, ?Await]</ins>
+        <ins>`own` [no LineTerminator here] FieldDefinitionList[?Yield, ?Await] ;</ins>
+        <ins>`static` FieldDefinitionList[?Yield, ?Await] ;</ins>
 
       MemberExpression[Yield, Await] :
         PrimaryExpression[?Yield, ?Await]
@@ -159,7 +159,7 @@ emu-example pre {
       <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries.</li>
     </ul>
 
-    <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+    <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if PropName of |FieldDefinitionList| includes `"prototype"`.
@@ -284,7 +284,7 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateName|.
-    1. Let _field_ be NewPrivateName();
+    1. Let _field_ be NewPrivateName().
     1. Let _scope_ be the running execution context's PrivateNameEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
     1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
@@ -298,12 +298,12 @@ emu-example pre {
   <h1>Static Semantics: PropertyDefinitionEvaluation</h1>
   <p>With parameters _object_ and _enumerable_.</p>
 
-  <emu-grammar>ClassElement : `static` FieldDefinitionList</emu-grammar>
+  <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
   </emu-alg>
 
-  <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList</emu-grammar>
+  <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList ;</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
   </emu-alg>
@@ -449,7 +449,7 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-      FieldDefinition : ClassElementName Initializer? ;
+      FieldDefinition : ClassElementName Initializer?
   </emu-grammar>
   <emu-alg>
     1. Return PrivateBoundNames of |ClassElementName|
@@ -511,12 +511,12 @@ emu-example pre {
     <h1>Static Semantics: IsStatic</h1>
 
     <ins class="block">
-      <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList</emu-grammar>
+      <emu-grammar>ClassElement : `own` [no LineTerminator here] FieldDefinitionList ;</emu-grammar>
       <emu-alg>
         1. Return *false*.
       </emu-alg>
 
-      <emu-grammar>ClassElement : static FieldDefinitionList</emu-grammar>
+      <emu-grammar>ClassElement : static FieldDefinitionList ;</emu-grammar>
       <emu-alg>
         1. Return *true*.
       </emu-alg>
