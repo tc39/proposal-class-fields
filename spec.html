@@ -124,6 +124,21 @@ emu-example pre {
         MetaProperty
         `new` MemberExpression[?Yield, ?Await] Arguments[?Yield, ?Await]
         <ins>MemberExpression[?Yield, ?Await] `.` PrivateName</ins>
+
+      PrimaryExpression[Yield, Await] :
+        `this`
+        IdentifierReference[?Yield, ?Await]
+        Literal
+        ArrayLiteral[?Yield, ?Await]
+        ObjectLiteral[?Yield, ?Await]
+        FunctionExpression
+        ClassExpression[?Yield, ?Await]
+        GeneratorExpression
+        AsyncFunctionExpression
+        RegularExpressionLiteral
+        TemplateLiteral[?Yield, ?Await]
+        CoverParenthesizedExpressionAndArrowParameterList[?Yield, ?Await] #parencover
+        <ins>PrivateName</ins>
     </emu-grammar>
   </emu-clause>
 
@@ -191,7 +206,13 @@ emu-example pre {
   <emu-clause id="sec-all-private-names-valid" aoid="AllPrivateNamesValid">
     <h1>Static Semantics: AllPrivateNamesValid</h1>
     AllPrivateNamesValid is an abstract operation which takes _names_ as an argument.
-    <emu-grammar>MemberExpression[Yield] : MemberExpression[?Yield] `.` PrivateName</emu-grammar>
+    <emu-grammar>MemberExpression[Yield, Await] : MemberExpression[?Yield, ?Await] `.` PrivateName</emu-grammar>
+    <emu-alg>
+      1. If StringValue of |PrivateName| is in _names_, return *true*.
+      1. Return *false*.
+    </emu-alg>
+
+    <emu-grammar>PrimaryExpression : PrivateName</emu-grammar>
     <emu-alg>
       1. If StringValue of |PrivateName| is in _names_, return *true*.
       1. Return *false*.
@@ -768,6 +789,14 @@ emu-example pre {
     1. Let _baseValue_ be ? GetValue(_baseReference_).
     1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
     1. Let _fieldNameString_ be the StringValue of |PrivateName|.
+    1. Return MakePrivateReference(_bv_, _fieldNameString_).
+  </emu-alg>
+
+  <emu-grammar>PrimaryExpression : PrivateName</emu-grammar>
+  <emu-alg>
+    1. Let _baseValue_ be ? ResolveThisBinding().
+    1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
+    1. Let _fieldNameString_ be the PrivateStringValue of |PrivateName|.
     1. Return MakePrivateReference(_bv_, _fieldNameString_).
   </emu-alg>
 </emu-clause>

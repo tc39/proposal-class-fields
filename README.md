@@ -81,13 +81,13 @@ class Counter extends HTMLElement {
   connectedCallback() { this.render(); }
 
   render() {
-    this.textContent = this.#x.toString();
+    this.textContent = #x.toString();
   }
 }
 window.customElements.define('num-counter', Counter);
 ```
 
-To make fields private, just give them a name starting with `#`.
+To make fields private, just give them a name starting with `#`. A shorthand for `this.#x` is `#x`.
 
 By defining things which are not visible outside of the class, ESnext provides stronger encapsulation, ensuring that your classes' users don't accidentally trip themselves up by depending on internals, which may change version to version.
 
@@ -117,6 +117,5 @@ Omitted from this proposal are private methods and accessors, private members of
 
 ## Changes vs previous proposals
 
-- Omitting concise syntax: When working out how code would evolve in some simple examples, it became clear that it's confusing that you're supposed to omit `this.` when turning a field from public to private, rather than just adding a `#` at the beginning of the name. For that reason, they are omitted from this proposal. However, the `.#` syntax is retained, which would be consistent with adding that shorthand later if we change our minds.
 - Comma-separated multiple definitions: These are visible in the above example of `class C`, and are analogous to comma-separated definitions from `var`, `let` and `const`. They may be immediately useful when declaring multiple `static` fields, but later are useful in conjuction with decorators.
 - Private static fields: These just fall out naturally "from the grid" when combining the proposals. It would've taken special spec text to specifically block them.
