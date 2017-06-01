@@ -112,8 +112,8 @@ emu-example pre {
       ClassElement[Yield, Await] :
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
-        <ins>FieldDefinitionList[?Yield, ?Await] ;</ins>
-        <ins>`static` FieldDefinitionList[?Yield, ?Await] ;</ins>
+        <ins>FieldDefinitionList[?Yield, ?Await] `;`</ins>
+        <ins>`static` FieldDefinitionList[?Yield, ?Await] `;`</ins>
 
       MemberExpression[Yield, Await] :
         PrimaryExpression[?Yield, ?Await]
@@ -172,7 +172,7 @@ emu-example pre {
       <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries, unless the name is used once for a getter and once for a setter.</li>
     </ul>
 
-    <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
+    <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if PropName of |FieldDefinitionList| includes `"prototype"`.
@@ -711,12 +711,12 @@ emu-example pre {
       1. Return a new empty List.
     </emu-alg>
 
-  <emu-grammar>ClassElement : `static` FieldDefinitionList ;</emu-grammar>
+  <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
   </emu-alg>
 
-  <emu-grammar>ClassElement : FieldDefinitionList ;</emu-grammar>
+  <emu-grammar>ClassElement : FieldDefinitionList `;`</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
   </emu-alg>
@@ -745,7 +745,7 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-    FieldDefinition : ClassElementName Initializer? ;
+    FieldDefinition : ClassElementName Initializer? `;`
   </emu-grammar>
   <emu-alg>
     1. Let _fieldName_ be the result of evaluating |ClassElementName|.
