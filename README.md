@@ -39,19 +39,14 @@ With the ESnext field declarations proposal, the above example can be written as
 class Counter extends HTMLElement {
   x = 0;
 
-  clicked() {
+  onclick = () => {
     this.x++;
-    window.requestAnimationFrame(this.render.bind(this));
-  }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
+    window.requestAnimationFrame(this.render);
   }
 
   connectedCallback() { this.render(); }
 
-  render() {
+  render = () => {
     this.textContent = this.x.toString();
   }
 }
@@ -68,14 +63,9 @@ The above example has some implementation details exposed to the world that migh
 class Counter extends HTMLElement {
   #x = 0;
 
-  clicked() {
+  onclick = () => {
     this.#x++;
-    window.requestAnimationFrame(this.render.bind(this));
-  }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
+    window.requestAnimationFrame(this.render);
   }
 
   connectedCallback() { this.render(); }
@@ -91,7 +81,7 @@ To make fields private, just give them a name starting with `#`. A shorthand for
 
 By defining things which are not visible outside of the class, ESnext provides stronger encapsulation, ensuring that your classes' users don't accidentally trip themselves up by depending on internals, which may change version to version.
 
-Note that ESnext provides private fields only as declared up-front in a field declaration; private fields cannot be created as expandos.
+Note that ESnext provides private fields only as declared up-front in a field declaration; private fields cannot be created as expandos.??
 
 ## Details of this proposal
 
