@@ -339,7 +339,7 @@ emu-example pre {
     1. Let _fieldName_ be _fieldRecord_.[[Name]].
     1. Let _initializer_ be _fieldRecord_.[[Initializer]].
     1. If _initializer_ is not ~empty~, then
-      1. Let _initValue_ be ? Call(_initializer_, *undefined*).
+      1. Let _initValue_ be ? Call(_initializer_, _receiver_).
     1. Else, let _initValue_ be *undefined*.
     1. If _name_ is a Private Name,
       1. Assert: _name_.[[PrivateNameType]] is ~field~.
