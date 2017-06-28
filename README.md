@@ -95,7 +95,7 @@ Note that ESnext provides private fields only as declared up-front in a field de
 
 ## Details of this proposal
 
-See the <a href="http://littledan.github.io/proposal-class-fields/">draft specification</a> for full details.
+See the [draft specification](https://tc39.github.io/proposal-class-fields/) for full details.
 
 ### Orthogonality
 
