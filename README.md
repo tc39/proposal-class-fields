@@ -91,7 +91,7 @@ To make fields private, just give them a name starting with `#`. A shorthand for
 
 By defining things which are not visible outside of the class, ESnext provides stronger encapsulation, ensuring that your classes' users don't accidentally trip themselves up by depending on internals, which may change version to version.
 
-Note that ESnext provides private fields only as declared up-front in a field declaration; private fields cannot be created as expandos.
+Note that ESnext provides private fields only as declared up-front in a field declaration; private fields cannot be created later, ad-hoc, through assigning to them, the way that normal properties can.
 
 ## Details of this proposal
 
