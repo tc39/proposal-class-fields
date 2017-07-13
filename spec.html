@@ -163,7 +163,7 @@ emu-example pre {
     <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if PropName of |FieldDefinitionList| includes `"prototype"`.
+        It is a Syntax Error if PropNames of |FieldDefinitionList| includes `"prototype"`.
       </li>
     </ul>
 
@@ -268,6 +268,27 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Return ~empty~.
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="static-semantics-propname">
+  <h1>Static Semantics: PropNames</h1>
+
+  <emu-grammar>
+      FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Let _propNames_ be PropNames of |FieldDefinitionList|.
+    1. Let _propName_ be PropName of |FieldDefinition|.
+    1. Append _propName_ to _propNames_.
+    1. Return _propNames_.
+  </emu-alg>
+
+  <emu-grammar>
+      FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
+  </emu-grammar>
+  <emu-alg>
+    1. Return a List containing PropName of |FieldDefinition|.
   </emu-alg>
 </emu-clause>
 
