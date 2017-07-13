@@ -335,7 +335,7 @@ emu-example pre {
       ClassElement : `;`
   </emu-grammar>
   <emu-alg>
-    1. Perform PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
+    1. Perform ? PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
     1. Return an empty List.
   </emu-alg>
 </emu-clause>
@@ -349,8 +349,8 @@ emu-example pre {
       FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
   </emu-grammar>
   <emu-alg>
-    1. Let _fields_ be ClassFieldDefinitionEvaluation of |FieldDefinitionList|.
-    1. Let _field_ be ClassFieldDefinitionEvaluation of |FieldDefinition|.
+    1. Let _fields_ be ? ClassFieldDefinitionEvaluation of |FieldDefinitionList|.
+    1. Let _field_ be ? ClassFieldDefinitionEvaluation of |FieldDefinition|.
     1. Append _field_ to _fields_.
     1. Return _fields_.
   </emu-alg>
@@ -359,7 +359,7 @@ emu-example pre {
       FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
   </emu-grammar>
   <emu-alg>
-    1. Return a List containing ClassFieldDefinitionEvaluation of |FieldDefinition|.
+    1. Return a List containing ? ClassFieldDefinitionEvaluation of |FieldDefinition|.
   </emu-alg>
 
   <emu-grammar>
@@ -367,6 +367,7 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _fieldName_ be the result of evaluating |ClassElementName|.
+    1. ReturnIfAbrupt(_fieldName_).
     1. If |Initializer_opt| is present,
       1. Let _lex_ be the Lexical Environment of the running execution context.
       1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer|, _lex_, *true*).
