@@ -316,8 +316,8 @@ emu-example pre {
 
 </emu-clause>
 
-<emu-clause id="static-semantics-property-definition-evaluation">
-  <h1>Static Semantics: PropertyDefinitionEvaluation</h1>
+<emu-clause id="static-semantics-class-element-evaluation">
+  <h1>Static Semantics: ClassElementEvaluation</h1>
   <p>With parameters _object_ and _enumerable_.</p>
 
   <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
@@ -328,6 +328,15 @@ emu-example pre {
   <emu-grammar>ClassElement : FieldDefinitionList `;`</emu-grammar>
   <emu-alg>
     1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
+  </emu-alg>
+  <emu-grammar>
+      ClassElement : MethodDefinition
+      ClassElement : `static` MethodDefinition
+      ClassElement : `;`
+  </emu-grammar>
+  <emu-alg>
+    1. Perform PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
+    1. Return an empty List.
   </emu-alg>
 </emu-clause>
 
@@ -599,13 +608,13 @@ emu-example pre {
       1. Perform MakeClassConstructor(_F_).
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
       1. If |ClassBody_opt| is not present, let _methods_ be a new empty List.
-      1. Else, let _methods_ be NonConstructorMethodDefinitions of |ClassBody|. <ins>NOTE: _methods_ includes field declarations</ins>
+      1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructorMethodDefinitions of |ClassBody|. <ins>NOTE: _methods_ includes field declarations</ins>
       1. Let _fieldRecords_ be a new empty List.
-      1. For each |ClassElement| _m_ in order from _methods_
+      1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
         1. If IsStatic of _m_ is *false*, then
-          1. Let _fields_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _proto_ and *false*.
+          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
         1. Else,
-          1. Let _fields_ be the result of performing PropertyDefinitionEvaluation for _m_ with arguments _F_ and *false*.
+          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
         1. If _fields_ is an abrupt completion, then
           1. Set the running execution context's LexicalEnvironment to _lex_.
           1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
