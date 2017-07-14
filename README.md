@@ -81,13 +81,13 @@ class Counter extends HTMLElement {
   connectedCallback() { this.render(); }
 
   render() {
-    this.textContent = #x.toString();
+    this.textContent = this.#x.toString();
   }
 }
 window.customElements.define('num-counter', Counter);
 ```
 
-To make fields private, just give them a name starting with `#`. A shorthand for `this.#x` is `#x`.
+To make fields private, just give them a name starting with `#`.
 
 By defining things which are not visible outside of the class, ESnext provides stronger encapsulation, ensuring that your classes' users don't accidentally trip themselves up by depending on internals, which may change version to version.
 
