@@ -96,10 +96,6 @@ emu-example pre {
       FieldDefinition[Yield, Await] :
         ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]?
 
-      FieldDefinitionList[Yield, Await] :
-        FieldDefinition[?Yield, ?Await]
-        FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
-
       PrivateName ::
         `#` IdentifierName
     </emu-grammar>
@@ -112,8 +108,8 @@ emu-example pre {
       ClassElement[Yield, Await] :
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
-        <ins>FieldDefinitionList[?Yield, ?Await] `;`</ins>
-        <ins>`static` FieldDefinitionList[?Yield, ?Await] `;`</ins>
+        <ins>FieldDefinition[?Yield, ?Await] `;`</ins>
+        <ins>`static` FieldDefinition[?Yield, ?Await] `;`</ins>
         `;`
 
       MemberExpression[Yield, Await] :
@@ -145,10 +141,10 @@ emu-example pre {
       <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries.</li>
     </ul>
 
-    <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
+    <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if PropNames of |FieldDefinitionList| includes `"prototype"`.
+        It is a Syntax Error if PropName of |FieldDefinition| is `"prototype"`.
       </li>
     </ul>
 
@@ -250,27 +246,6 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="static-semantics-propname">
-  <h1>Static Semantics: PropNames</h1>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Let _propNames_ be PropNames of |FieldDefinitionList|.
-    1. Let _propName_ be PropName of |FieldDefinition|.
-    1. Append _propName_ to _propNames_.
-    1. Return _propNames_.
-  </emu-alg>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Return a List containing PropName of |FieldDefinition|.
-  </emu-alg>
-</emu-clause>
-
 <emu-clause id="sec-runtime-semantics-evaluate-name">
   <h1>Runtime Semantics: Evaluation</h1>
   <emu-grammar>
@@ -299,14 +274,14 @@ emu-example pre {
   <h1>Static Semantics: ClassElementEvaluation</h1>
   <p>With parameters _object_ and _enumerable_.</p>
 
-  <emu-grammar>ClassElement : `static` FieldDefinitionList `;`</emu-grammar>
+  <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>
   <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *true* and _object_.
+    1. Return ClassFieldDefinitionEvaluation of |FieldDefinition| with parameter *true* and _object_.
   </emu-alg>
 
-  <emu-grammar>ClassElement : FieldDefinitionList `;`</emu-grammar>
+  <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
   <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of FieldDefinitionList with parameter *false* and _object_.
+    1. Return ClassFieldDefinitionEvaluation of |FieldDefinition| with parameter *false* and _object_.
   </emu-alg>
   <emu-grammar>
       ClassElement : MethodDefinition
@@ -323,23 +298,6 @@ emu-example pre {
   <h1>Runtime Semantics: ClassFieldDefinitionEvaluation</h1>
 
   <p>With parameters _isStatic_ and _homeObject_.</p>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinitionList[?Yield, ?Await] `,` FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Let _fields_ be ? ClassFieldDefinitionEvaluation of |FieldDefinitionList|.
-    1. Let _field_ be ? ClassFieldDefinitionEvaluation of |FieldDefinition|.
-    1. Append _field_ to _fields_.
-    1. Return _fields_.
-  </emu-alg>
-
-  <emu-grammar>
-      FieldDefinitionList[Yield, Await] : FieldDefinition[?Yield, ?Await]
-  </emu-grammar>
-  <emu-alg>
-    1. Return a List containing ? ClassFieldDefinitionEvaluation of |FieldDefinition|.
-  </emu-alg>
 
   <emu-grammar>
     FieldDefinition : ClassElementName Initializer?
@@ -442,24 +400,6 @@ emu-example pre {
 <emu-clause id="sec-private-bound-names" aoid="PrivateBoundNames">
   <h1>Static Semantics: PrivateBoundNames</h1>
   <emu-grammar>
-      FieldDefinitionList : FieldDefinition
-  </emu-grammar>
-  <emu-alg>
-    1. Return PrivateBoundNames of |FieldDefinition|
-  </emu-alg>
-
-  <emu-grammar>
-      FieldDefinitionList :
-        FieldDefinitionList `,` FieldDefinition
-  </emu-grammar>
-  <emu-alg>
-    1. Let _names_ be PrivateBoundNames of |FieldDefinitionList|.
-    1. Let _additionalNames_ be PrivateBoundNames of |FieldDefinition|.
-    1. Append the elements of _additionalNames_ to _names_.
-    1. Return _names_.
-  </emu-alg>
-
-  <emu-grammar>
       FieldDefinition : ClassElementName Initializer?
   </emu-grammar>
   <emu-alg>
@@ -522,12 +462,12 @@ emu-example pre {
     <h1>Static Semantics: IsStatic</h1>
 
     <ins class="block">
-      <emu-grammar>ClassElement : FieldDefinitionList</emu-grammar>
+      <emu-grammar>ClassElement : FieldDefinition</emu-grammar>
       <emu-alg>
         1. Return *false*.
       </emu-alg>
 
-      <emu-grammar>ClassElement : static FieldDefinitionList</emu-grammar>
+      <emu-grammar>ClassElement : static FieldDefinition</emu-grammar>
       <emu-alg>
         1. Return *true*.
       </emu-alg>
