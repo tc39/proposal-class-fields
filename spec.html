@@ -144,7 +144,21 @@ emu-example pre {
     <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if PropName of |FieldDefinition| is `"prototype"`.
+        It is a Syntax Error if PropName of |FieldDefinition| is `"prototype"` or `"constructor"`.
+      </li>
+    </ul>
+
+    <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
+    <ul>
+      <li>
+        It is a Syntax Error if PropName of |FieldDefinition| is `"constructor"`.
+      </li>
+    </ul>
+
+    <emu-grammar>ClassElementName : PrivateName `;`</emu-grammar>
+    <ul>
+      <li>
+        It is a Syntax Error if StringValue of |PrivateName| is `"#constructor"`.
       </li>
     </ul>
 
