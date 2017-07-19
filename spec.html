@@ -501,7 +501,9 @@ emu-example pre {
       <h1>Static Semantics: NonConstructorElementDefinitions</h1>
       <emu-grammar>ClassElementList : ClassElement</emu-grammar>
       <emu-alg>
-        1. If |ClassElement| is <ins>any of</ins> <emu-grammar>ClassElement : `;`</emu-grammar>, <ins><emu-grammar>FieldDefinition[?Yield, ?Await] `;`</emu-grammar> or <emu-grammar>`static` FieldDefinition[?Yield, ?Await] `;`</emu-grammar></ins>, return a new empty List.
+        1. If |ClassElement| is <emu-grammar>ClassElement : `;`</emu-grammar>, return a new empty List.
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
         1. If IsStatic of |ClassElement| is *false* and PropName of |ClassElement| is `"constructor"`, return a new empty List.
         1. Return a List containing |ClassElement|.
       </emu-alg>
@@ -509,6 +511,8 @@ emu-example pre {
       <emu-alg>
         1. Let _list_ be NonConstructorElementDefinitions of |ClassElementList|.
         1. If |ClassElement| is <emu-grammar>ClassElement : `;`</emu-grammar> , return _list_.
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
         1. If IsStatic of |ClassElement| is *false* and PropName of |ClassElement| is `"constructor"`, return _list_.
         1. Append |ClassElement| to the end of _list_.
         1. Return _list_.
