@@ -274,7 +274,7 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateName|.
-    1. Let _field_ be NewPrivateName().
+    1. Let _field_ be NewPrivateName(_bindingName_).
     1. Let _scope_ be the running execution context's PrivateNameEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
     1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
@@ -350,6 +350,26 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
+    <!-- es6num="9.2.11" -->
+    <emu-clause id="sec-setfunctionname" aoid="SetFunctionName">
+      <h1>SetFunctionName ( _F_, _name_ [ , _prefix_ ] )</h1>
+      <p>The abstract operation SetFunctionName requires a Function argument _F_, a String or Symbol argument _name_ and optionally a String argument _prefix_. This operation adds a `name` property to _F_ by performing the following steps:</p>
+      <emu-alg>
+        1. Assert: _F_ is an extensible object that does not have a `name` own property.
+        1. Assert: Type(_name_) is either Symbol, String, <ins>or Private Name</ins>.
+        1. Assert: If _prefix_ was passed, then Type(_prefix_) is String.
+        1. If Type(_name_) is Symbol, then
+          1. Let _description_ be _name_'s [[Description]] value.
+          1. If _description_ is *undefined*, set _name_ to the empty String.
+          1. Else, set _name_ to the concatenation of `"["`, _description_, and `"]"`.
+        1. <ins>Else if _name_ is a Private Name,</ins>
+          1. <ins>Set _name_ to _name_'s [[Description]] value.</ins>
+        1. If _prefix_ was passed, then
+          1. Set _name_ to the concatenation of _prefix_, code unit 0x0020 (SPACE), and _name_.
+        1. Return ! DefinePropertyOrThrow(_F_, `"name"`, PropertyDescriptor{[[Value]]: _name_, [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *true*}).
+      </emu-alg>
+    </emu-clause>
+
 <emu-clause id="sec-define-field">
   <h1>DefineField(_receiver_, _fieldRecord_)</h1>
     <emu-alg>
@@ -360,13 +380,13 @@ emu-example pre {
     1. If _initializer_ is not ~empty~, then
       1. Let _initValue_ be ? Call(_initializer_, _receiver_).
     1. Else, let _initValue_ be *undefined*.
+    1. If _fieldRecord_.[[IsAnonymousFunctionDefinition]] is *true*, then
+      1. Let _hasNameProperty_ be ? HasOwnProperty(_initValue_, `"name"`).
+      1. If _hasNameProperty_ is *false*, perform SetFunctionName(_initValue_, _fieldName_).
     1. If _fieldName_ is a Private Name,
       1. Perform ? PrivateFieldAdd(_fieldName_, _O_, _initialValue_).
     1. Else,
       1. NOTE: _fieldName_ is a property key.
-      1. If _fieldRecord_.[[IsAnonymousFunctionDefinition]] is *true*, then
-        1. Let _hasNameProperty_ be ? HasOwnProperty(_initValue_, `"name"`).
-        1. If _hasNameProperty_ is *false*, perform SetFunctionName(_initValue_, _propKey_).
       1. Let _desc_ be PropertyDescriptor{
            [[Configurable]]: *false*,
            [[Enumerable]]: *true*,
@@ -691,6 +711,8 @@ emu-example pre {
   <h1>Private Names and references</h1>
 <p>The <dfn>Private Name</dfn> specification type is used to describe a globally unique identifier which represents a private field name. A private name may be installed on any ECMAScript object with the PrivateFieldAdd internal algorithm, and then read or written using PrivateFieldGet and PrivateFieldSet.</p>
 
+  <p>Each PrivateName value immutably holds an associated value called [[Description]] that is a String value.</p>
+
 <p>All ECMAScript objects have a new additional internal slot, [[PrivateFieldValues]], which is a List of Records of the form { [[PrivateName]]: Private Name, [[PrivateFieldValue]]: ECMAScript value }. This List represents the values of the private fields for the object. All objects, including Proxies and all host environment-provided objects, have this internal slot, but primitives such as Numbers do not.</p>
 
 <emu-note editor>
@@ -722,9 +744,9 @@ emu-example pre {
 </emu-clause>
 
 <emu-clause id="sec-newprivatename" aoid="NewPrivateName">
-  <h1>NewPrivateName ()</h1>
+  <h1>NewPrivateName ( _description_ )</h1>
   <emu-alg>
-    1. Return a new globally unique Private Name value.
+    1. Return a new unique Private Name value whose [[Description]] value is _description_.
   </emu-alg>
 </emu-clause>
 
