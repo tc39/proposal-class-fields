@@ -327,7 +327,7 @@ emu-example pre {
     1. Else,
       1. Let _initializer_ be ~empty~.
       1. Let _isAnonymousFunctionDeclaration_ be *false*.
-    1. Return Record {
+    1. Return a List containing Record {
          [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
          [[Static]]: _isStatic_,
@@ -595,7 +595,7 @@ emu-example pre {
       1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructor<del>Method</del><ins>Element</ins>Definitions of |ClassBody|.
       1. Let _fieldRecords_ be a new empty List.
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
-        1. If IsStatic of _m_ is *false*, then
+        1. If IsStatic of <del>_m_</del><ins>_e_</ins> is *false*, then
           1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
         1. Else,
           1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
