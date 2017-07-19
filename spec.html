@@ -353,7 +353,7 @@ emu-example pre {
     <!-- es6num="9.2.11" -->
     <emu-clause id="sec-setfunctionname" aoid="SetFunctionName">
       <h1>SetFunctionName ( _F_, _name_ [ , _prefix_ ] )</h1>
-      <p>The abstract operation SetFunctionName requires a Function argument _F_, a String or Symbol argument _name_ and optionally a String argument _prefix_. This operation adds a `name` property to _F_ by performing the following steps:</p>
+      <p>The abstract operation SetFunctionName requires a Function argument _F_, a String, Symbol, <ins>or Private Name</ins> argument _name_ and optionally a String argument _prefix_. This operation adds a `name` property to _F_ by performing the following steps:</p>
       <emu-alg>
         1. Assert: _F_ is an extensible object that does not have a `name` own property.
         1. Assert: Type(_name_) is either Symbol, String, <ins>or Private Name</ins>.
