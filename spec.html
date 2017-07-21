@@ -131,7 +131,7 @@ emu-example pre {
         PropertyName[?Yield] Initializer?
     </emu-grammar>
     <ul>
-      <li>It is a Syntax Error if |Initializer| Contains an |IdentifierReference| whose StringValue is `"arguments"`.
+      <li>It is a Syntax Error if ContainsArguments of |Initializer| is *true*.</li>
     </ul>
 
     <emu-grammar>
@@ -224,7 +224,7 @@ emu-example pre {
     <p>These static semantics are applied by PerformEval when a direct eval call occurs inside a class field initializer.</p>
     <emu-grammar>ScriptBody : StatementList</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if |StatementList| Contains an |IdentifierReference| whose StringValue is `"arguments"`.</li>
+      <li>It is a Syntax Error if ContainsArguments of |StatementList| is *true*.</li>
       <li>The remaining eval rules apply as <a href="https://tc39.github.io/ecma262/#sec-performeval-rules-outside-constructors">outside a constructor</a>, <a href="https://tc39.github.io/ecma262/#sec-performeval-rules-outside-methods">inside a method</a>, and <a href="https://tc39.github.io/ecma262/#sec-performeval-rules-outside-functions">inside a function</a>.</li>
     </ul>
   </emu-clause>
@@ -494,6 +494,81 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Return PrivateBoundNames of |ClassElementList|.
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-static-semantics-contains-arguments">
+  <h1>Static Semantics: ContainsArguments</h1>
+  <emu-grammar>
+    IdentifierReference : Identifier
+  </emu-grammar>
+  <emu-alg>
+    1. If the StringValue of |Identifier| is `"arguments"`, return *true*.
+    2. Else, return *false*.
+  </emu-alg>
+
+  <emu-grammar>
+    FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`
+
+    FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`
+
+    FunctionExpression : `function` BindingIdentifier? `(` FormalParameters `)` `{` FunctionBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return *false*.
+  </emu-alg>
+
+  <emu-grammar>
+    MethodDefinition :
+      PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`
+      `get` PropertyName `(` `)` `{` FunctionBody `}`
+      `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return the result of ContainsArguments for |PropertyName|.
+  </emu-alg>
+
+  <emu-grammar>
+    GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return the result of ContainsArguments for |PropertyName|.
+  </emu-alg>
+
+  <emu-grammar>
+    GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`
+
+    GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`
+
+    GeneratorExpression : `function` `*` BindingIdentifier? `(` FormalParameters `)` `{` GeneratorBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return *false*.
+  </emu-alg>
+
+  <emu-grammar>ClassBody : ClassElementList</emu-grammar>
+  <emu-alg>
+    1. Return *false*.
+  </emu-alg>
+
+  <emu-grammar>
+    AsyncMethod : `async` [no LineTerminator here] PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return the result of ContainsArguments for |PropertyName|.
+  </emu-alg>
+
+  <emu-grammar>
+    AsyncFunctionDeclaration : `async` [no LineTerminator here] `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+
+    AsyncFunctionDeclaration : `async` [no LineTerminator here] `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+
+    AsyncFunctionExpression : `async` [no LineTerminator here] `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+
+    AsyncFunctionExpression : `async` [no LineTerminator here] `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+  </emu-grammar>
+  <emu-alg>
+    1. Return *false*.
   </emu-alg>
 </emu-clause>
 
