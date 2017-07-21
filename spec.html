@@ -499,6 +499,20 @@ emu-example pre {
 
 <emu-clause id="sec-static-semantics-contains-arguments">
   <h1>Static Semantics: ContainsArguments</h1>
+  <emu-note type=editor>
+    <p>The spec's existing section on <emu-xref href="#sec-static-semantic-rules">Algorithm Conventions for Static Semantics</emu-xref> should be expanded to include the following:</p>
+
+      <p><ins>Unless otherwise specified every grammar production alternative in this specification implicitly has a definition for a static semantic rule named ContainsArguments which takes an argument named _symbol_ whose value is a terminal or nonterminal of the grammar that includes the associated production. The default definition of ContainsArguments is:</ins></p>
+      <emu-alg>
+        1. <ins>For each child node _child_ of this Parse Node, do</ins>
+          1. <ins>If _child_ is an instance of a nonterminal, then</ins>
+            1. <ins>Let _contained_ be the result of ContainsArguments for _child_.</ins>
+            1. <ins>If _contained_ is *true*, return *true*.</ins>
+        1. <ins>Return *false*.</ins>
+      </emu-alg>
+      <p><ins>The above definition is explicitly over-ridden for specific productions.</ins></p>
+  </emu-note>
+
   <emu-grammar>
     IdentifierReference : Identifier
   </emu-grammar>
