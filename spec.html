@@ -196,9 +196,9 @@ emu-example pre {
     </emu-alg>
     <emu-grammar>Module : ModuleBody?</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with ane empty List as an argument is *false*.</li>
+      <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with an empty List as an argument is *false*.</li>
     </ul>
-    <emu-note editor>References to PrivateNames which are not lexically present cause an early error. PrivateNames with or without an explicit receiver are treated identically, see <a href="https://github.com/tc39/proposal-private-fields/issues/23">bug thread</a> where a stricter policy was proposed and rejected.</emu-note>
+    <emu-note editor>References to PrivateNames which are not lexically present cause an early error.</emu-note>
   <emu-clause id="sec-all-private-names-valid" aoid="AllPrivateNamesValid">
     <h1>Static Semantics: AllPrivateNamesValid</h1>
     AllPrivateNamesValid is an abstract operation which takes _names_ as an argument.
@@ -214,7 +214,7 @@ emu-example pre {
       1. Return AllPrivateNamesValid of |ClassElementList| with the argument _newNames_.
     </emu-alg>
 
-    For all other grammatical productions, recurse on subexpressions/substatements, passing in the _names_ of the caller. If all pieces return *true*, then return *true*. If any returns *false*, return *false.
+    For all other grammatical productions, recurse on subexpressions/substatements, passing in the _names_ of the caller. If all pieces return *true*, then return *true*. If any returns *false*, return *false*.
   <emu-note editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
   </emu-clause>
 <emu-clause id="sec-performeval">
