@@ -190,7 +190,7 @@ emu-example pre {
     <emu-note>
       <p>The last rule means that expressions such as `delete (((foo)))` produce early errors because of recursive application of the first rule.</p>
     </emu-note>
-    <emu-note editor>Private fields may not be deleted in any case. There are only ever private names defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no private names defined, so the below rule will apply.</emu-note>
+    <emu-note type=editor>Private fields may not be deleted in any case. There are only ever private names defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no private names defined, so the below rule will apply.</emu-note>
 
     <emu-grammar>Script : ScriptBody?</emu-grammar>
     <emu-alg>
@@ -207,7 +207,7 @@ emu-example pre {
     <ul>
       <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with an empty List as an argument is *false*.</li>
     </ul>
-    <emu-note editor>References to PrivateNames which are not lexically present cause an early error.</emu-note>
+    <emu-note type=editor>References to PrivateNames which are not lexically present cause an early error.</emu-note>
   <emu-clause id="sec-all-private-names-valid" aoid="AllPrivateNamesValid">
     <h1>Static Semantics: AllPrivateNamesValid</h1>
     AllPrivateNamesValid is an abstract operation which takes _names_ as an argument.
@@ -230,7 +230,7 @@ emu-example pre {
     </emu-alg>
 
     For all other grammatical productions, recurse on subexpressions/substatements, passing in the _names_ of the caller. If all pieces return *true*, then return *true*. If any returns *false*, return *false*.
-  <emu-note editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
+  <emu-note type=editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
   </emu-clause>
 <emu-clause id="sec-performeval">
   <h1>Runtime Semantics: PerformEval ( _x_, _evalRealm_, _strictCaller_, _direct_ )</h1>
@@ -295,7 +295,7 @@ emu-example pre {
     1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
     1. Return _field_.
   </emu-alg>
-  <emu-note editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
+  <emu-note type=editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
 </emu-clause>
 
@@ -439,7 +439,7 @@ emu-example pre {
         1. Perform ? DefineField(_O_, _fieldRecord_).
     1. Return.
   </emu-alg>
-  <emu-note editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
+  <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
 </emu-clause>
 
 <emu-clause id="sec-private-names-static-semantics-stringvalue">
@@ -587,7 +587,7 @@ emu-example pre {
   </emu-alg>
 
   For all other grammatical productions, recurse on all nonterminals. If any piece returns *true*, then return *true*. Otherwise return *false*.
-  <emu-note editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
+  <emu-note type=editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
 </emu-clause>
 
     <emu-clause id="sec-static-semantics-nonconstructorelementdefinitions">
@@ -748,7 +748,7 @@ emu-example pre {
     1. Else, ReturnIfAbrupt(_result_).
     1. Return ? _envRec_.GetThisBinding().
   </emu-alg>
-  <emu-note editor>Fields are added by the base class constructor when the super chain reaches up to that, rather than by the subclass constructor when creating the object, in order to be analogous to ES2015 subclassable builtins. See <a href="https://github.com/tc39/proposal-private-fields/issues/17">this GitHub thread</a> for more discussion.</emu-note>
+  <emu-note type=editor>Fields are added by the base class constructor when the super chain reaches up to that, rather than by the subclass constructor when creating the object, in order to be analogous to ES2015 subclassable builtins. See <a href="https://github.com/tc39/proposal-private-fields/issues/17">this GitHub thread</a> for more discussion.</emu-note>
 </emu-clause>
 
 <emu-clause id="the-super-keyword">
@@ -812,7 +812,7 @@ emu-example pre {
 
 <p>All ECMAScript objects have a new additional internal slot, [[PrivateFieldValues]], which is a List of Records of the form { [[PrivateName]]: Private Name, [[PrivateFieldValue]]: ECMAScript value }. This List represents the values of the private fields for the object. All objects, including Proxies and all host environment-provided objects, have this internal slot, but primitives such as Numbers do not.</p>
 
-<emu-note editor>
+<emu-note type=editor>
 <p>
   Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, PrivateNameIdentifiers specifically do not have this connotation: because the reference from the Identifier to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the identifier.
 </p>
@@ -821,7 +821,7 @@ emu-example pre {
 </p>
 </emu-note>
 
-<emu-note editor>
+<emu-note type=editor>
   Private fields are deliberately inaccessible outside of the class body. It is proposed that there could be an "escape hatch" to access them though some sort of reflective mechanism; see <a href="https://github.com/tc39/proposal-private-fields/issues/33">the GitHub thread</a>. This proposal deliberately omits any such escape hatch.
 </emu-note>
 
@@ -837,7 +837,7 @@ emu-example pre {
     1. <ins>Set _obj_.[[PrivateFieldValues]] to an empty List.</ins>
     1. Return _obj_.
   </emu-alg>
-  <emu-note editor>TODO: All ECMAScript objects, including Proxies, and any user exotic object, should have a [[PrivateFieldValues]] internal slot iniitlaized to an empty List.</emu-note>
+  <emu-note type=editor>TODO: All ECMAScript objects, including Proxies, and any user exotic object, should have a [[PrivateFieldValues]] internal slot iniitlaized to an empty List.</emu-note>
 </emu-clause>
 
 <emu-clause id="sec-newprivatename" aoid="NewPrivateName">
@@ -1070,10 +1070,10 @@ emu-example pre {
     </emu-table>
   <emu-note>The PrivateNameEnvironment Lexical Context is always a chain of Declaration Contexts. Each name begins with `"#"`.</emu-note>
 
-  <emu-note editor>Private names could be specified by lumping it all into the LexicalEnvironment. However, this would create false conflicts with object environment records that would need to be resolved. Further, it seems logically cleaner to separate out the distinct namespace into a distinct object.</emu-note>
+  <emu-note type=editor>Private names could be specified by lumping it all into the LexicalEnvironment. However, this would create false conflicts with object environment records that would need to be resolved. Further, it seems logically cleaner to separate out the distinct namespace into a distinct object.</emu-note>
 
   When a new execution context is created for an ECMAScript code execution context, the PrivateNameIdentifiers value is inherited from the running execution context, or if none exists, a new Declaration Context with a *null* parent.
-  <emu-note editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
+  <emu-note type=editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
 </emu-clause>
 
 </emu-clause>
