@@ -190,7 +190,7 @@ emu-example pre {
     <emu-note>
       <p>The last rule means that expressions such as `delete (((foo)))` produce early errors because of recursive application of the first rule.</p>
     </emu-note>
-    <emu-note editor>Private fields may not be deleted</emu-note>
+    <emu-note editor>Private fields may not be deleted in any case. There are only ever private names defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no private names defined, so the below rule will apply.</emu-note>
 
     <emu-grammar>Script : ScriptBody?</emu-grammar>
     <emu-alg>
