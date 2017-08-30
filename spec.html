@@ -336,7 +336,8 @@ emu-example pre {
     1. ReturnIfAbrupt(_fieldName_).
     1. If |Initializer_opt| is present,
       1. Let _lex_ be the Lexical Environment of the running execution context.
-      1. Let _initializer_ be FunctionCreate(~Method~, ~empty~, |Initializer|, _lex_, *true*).
+      1. Let _formalParameterList_ be an instance of the production <emu-grammar>FormalParameters : [empty]</emu-grammar>.
+      1. Let _initializer_ be FunctionCreate(~Method~, _formalParameterList_, |Initializer|, _lex_, *true*).
       1. Perform MakeMethod(_initializer_, _homeObject_).
       1. Let _isAnonymousFunctionDefinition_ be IsAnonymousFunctionDefinition(|Initializer|).
     1. Else,
@@ -354,15 +355,17 @@ emu-example pre {
 <emu-clause id="runtime-semantics-class-public-field-definition-evaluation">
   <h1>Runtime Semantics: EvaluateBody</h1>
 
-  <p>With parameter _functionObject_.</p>
+  <p>With parameter _functionObject_ and List _argumentsList_.</p>
 
   <emu-grammar>
     Initializer[In, Yield] :
       `=` AssignmentExpression[?In, ?Yield]
   </emu-grammar>
   <emu-alg>
+    1. Assert: _argumentsList_ is empty.
     1. Return the result of evaluating |AssignmentExpression|.
   </emu-alg>
+  <emu-note>FunctionDeclarationInstantiate would not have any observable behavior here, so its call is omitted.</emu-note>
 </emu-clause>
 
     <!-- es6num="9.2.11" -->
