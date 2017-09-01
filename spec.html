@@ -655,6 +655,7 @@ emu-example pre {
         1. Let _constructorParent_ be the intrinsic object %FunctionPrototype%.
       1. Else,
         1. Set the running execution context's LexicalEnvironment to _classScope_.
+        1. <ins>NOTE: The running execution context's PrivateNameEnvironment is _outerPrivateEnvironment_ when evaluating |ClassHeritage|.</ins>
         1. Let _superclass_ be the result of evaluating |ClassHeritage|.
         1. Set the running execution context's LexicalEnvironment to _lex_.
         1. ReturnIfAbrupt(_superclass_).
