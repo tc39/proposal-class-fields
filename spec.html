@@ -404,7 +404,7 @@ emu-example pre {
     1. If _fieldName_ is a Private Name,
       1. Perform ? PrivateFieldAdd(_fieldName_, _receiver_, _initialValue_).
     1. Else,
-      1. NOTE: _fieldName_ is a property key.
+      1. Assert: IsPropertyKey(_fieldName_) is *true*.
       1. Let _desc_ be PropertyDescriptor{
            [[Configurable]]: *true*,
            [[Enumerable]]: *true*,
