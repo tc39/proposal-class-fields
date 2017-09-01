@@ -406,10 +406,10 @@ emu-example pre {
     1. Else,
       1. Assert: IsPropertyKey(_fieldName_) is *true*.
       1. Let _desc_ be PropertyDescriptor{
-           [[Configurable]]: *true*,
-           [[Enumerable]]: *true*,
+           [[Value]]: _initValue_,
            [[Writable]]: *true*,
-           [[Value]]: _initValue_
+           [[Enumerable]]: *true*,
+           [[Configurable]]: *true*
          }.
       1. Perform ? DefinePropertyOrThrow(_receiver_, _fieldName_, _desc_).
     <emu-alg>
