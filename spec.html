@@ -693,7 +693,7 @@ emu-example pre {
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
       1. If |ClassBody_opt| is not present, let _methods_ be a new empty List.
       1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructor<del>Method</del><ins>Element</ins>Definitions of |ClassBody|.
-      1. Let _fieldRecords_ be a new empty List.
+      1. <ins>Let _fieldRecords_ be a new empty List.</ins>
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
         1. If IsStatic of <del>_m_</del><ins>_e_</ins> is *false*, then
           1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
@@ -703,7 +703,7 @@ emu-example pre {
           1. Set the running execution context's LexicalEnvironment to _lex_.
           1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
           1. Return Completion(_status_).
-        1. <ins>Append _fields_ to _fieldRecords_</ins>
+        1. <ins>Append to _fieldRecords_ the elements of _fields_.</ins>
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
