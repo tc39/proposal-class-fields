@@ -193,20 +193,13 @@ emu-example pre {
     </emu-note>
     <emu-note type=editor>Private fields may not be deleted in any case. There are only ever private names defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no private names defined, so the below rule will apply.</emu-note>
 
-    <emu-grammar>Script : ScriptBody?</emu-grammar>
-    <emu-alg>
-      1. Let _names_ be an empty List.
-      1. If |Script| is parsed directly from PerformEval,
-        1. Let _env_ be the running execution context's PrivateNameEnvironment.
-        1. Repeat while _env_ is not *null*,
-          1. For each binding named _N_ in _env_,
-            1. If _names_ does not contain _N_, append _N_ to _names_.
-          1. Let _env_ be _env_'s outer environment reference.
-      1. If AllPrivateNamesValid of |ScriptBody| with the argument _names_ is *false*, throw a *SyntaxError* exception.
-    </emu-alg>
-    <emu-grammar>Module : ModuleBody?</emu-grammar>
+    <emu-grammar>ScriptBody : StatementList</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if AllPrivateNamesValid of <emu-nt>ModuleBody</emu-nt> with an empty List as an argument is *false*.</li>
+      <li>It is a Syntax Error if AllPrivateNamesValid of |StatementList| with an empty List as an argument is *false* unless the source code is eval code that is being processed by a direct eval.</li>
+    </ul>
+    <emu-grammar>ModuleBody : ModuleItemList</emu-grammar>
+    <ul>
+      <li>It is a Syntax Error if AllPrivateNamesValid of |ModuleItemList| with an empty List as an argument is *false*.</li>
     </ul>
     <emu-note type=editor>References to PrivateNames which are not lexically present cause an early error.</emu-note>
   <emu-clause id="sec-all-private-names-valid" aoid="AllPrivateNamesValid">
@@ -858,7 +851,8 @@ emu-example pre {
             1. If _strict_ is *true*, then
               1. If BoundNames of _parameters_ contains any duplicate elements, throw a *SyntaxError* exception.
             1. <ins>Let _privateNames_ be an empty List.</ins>
-            1. <ins>If AllPrivateNamesValid of |ScriptBody| with the argument _privateNames_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>If AllPrivateNamesValid of _body_ with the argument _privateNames_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>If AllPrivateNamesValid of _parameters_ with the argument _privateNames_ is *false*, throw a *SyntaxError* exception.</ins>
             1. Let _proto_ be ? GetPrototypeFromConstructor(_newTarget_, _fallbackProto_).
             1. Let _F_ be FunctionAllocate(_proto_, _strict_, _kind_).
             1. Let _realmF_ be _F_.[[Realm]].
@@ -879,6 +873,100 @@ emu-example pre {
       </emu-clause>
     </emu-clause>
 
+
+    <emu-clause id="sec-eval-x">
+      <h1>eval ( _x_ )</h1>
+      <emu-clause id="sec-evaldeclarationinstantiation" aoid="EvalDeclarationInstantiation">
+        <h1>Runtime Semantics: EvalDeclarationInstantiation( _body_, _varEnv_, _lexEnv_, _strict_ )</h1>
+        <p>When the abstract operation EvalDeclarationInstantiation is called with arguments _body_, _varEnv_, _lexEnv_, and _strict_, the following steps are taken:</p>
+        <emu-alg>
+          1. Let _varNames_ be the VarDeclaredNames of _body_.
+          1. Let _varDeclarations_ be the VarScopedDeclarations of _body_.
+          1. Let _lexEnvRec_ be _lexEnv_'s EnvironmentRecord.
+          1. Let _varEnvRec_ be _varEnv_'s EnvironmentRecord.
+          1. If _strict_ is *false*, then
+            1. If _varEnvRec_ is a global Environment Record, then
+              1. For each _name_ in _varNames_, do
+                1. If _varEnvRec_.HasLexicalDeclaration(_name_) is *true*, throw a *SyntaxError* exception.
+                1. NOTE: `eval` will not create a global var declaration that would be shadowed by a global lexical declaration.
+            1. Let _thisLex_ be _lexEnv_.
+            1. Assert: The following loop will terminate.
+            1. Repeat while _thisLex_ is not the same as _varEnv_,
+              1. Let _thisEnvRec_ be _thisLex_'s EnvironmentRecord.
+              1. If _thisEnvRec_ is not an object Environment Record, then
+                1. NOTE: The environment of with statements cannot contain any lexical declaration so it doesn't need to be checked for var/let hoisting conflicts.
+                1. For each _name_ in _varNames_, do
+                  1. If _thisEnvRec_.HasBinding(_name_) is *true*, then
+                    1. Throw a *SyntaxError* exception.
+                    1. NOTE: Annex <emu-xref href="#sec-variablestatements-in-catch-blocks"></emu-xref> defines alternate semantics for the above step.
+                  1. NOTE: A direct eval will not hoist var declaration over a like-named lexical declaration.
+              1. Let _thisLex_ be _thisLex_'s outer environment reference.
+          1. <ins>Let _privateNames_ be an empty List.</ins>
+          1. <ins>Let _privateEnv_ be the running execution context's PrivateNameEnvironment.</ins>
+          1. <ins>Repeat while _privateEnv_ is not *null*,</ins>
+            1. <ins>For each binding named _N_ in _privateEnv_,</ins>
+              1. <ins>If _privateNames_ does not contain _N_, append _N_ to _privateNames_.</ins>
+            1. <ins>Let _privateEnv_ be _privateEnv_'s outer environment reference.</ins>
+          1. <ins>If AllPrivateNamesValid of _body_ with the argument _privateNames_ is *false*, throw a *SyntaxError* exception.</ins>
+          1. Let _functionsToInitialize_ be a new empty List.
+          1. Let _declaredFunctionNames_ be a new empty List.
+          1. For each _d_ in _varDeclarations_, in reverse list order do
+            1. If _d_ is neither a |VariableDeclaration| nor a |ForBinding| nor a |BindingIdentifier|, then
+              1. Assert: _d_ is either a |FunctionDeclaration|, a |GeneratorDeclaration|, or an |AsyncFunctionDeclaration|.
+              1. NOTE If there are multiple function declarations for the same name, the last declaration is used.
+              1. Let _fn_ be the sole element of the BoundNames of _d_.
+              1. If _fn_ is not an element of _declaredFunctionNames_, then
+                1. If _varEnvRec_ is a global Environment Record, then
+                  1. Let _fnDefinable_ be ? _varEnvRec_.CanDeclareGlobalFunction(_fn_).
+                  1. If _fnDefinable_ is *false*, throw a *TypeError* exception.
+                1. Append _fn_ to _declaredFunctionNames_.
+                1. Insert _d_ as the first element of _functionsToInitialize_.
+          1. NOTE: Annex <emu-xref href="#sec-web-compat-evaldeclarationinstantiation"></emu-xref> adds additional steps at this point.
+          1. Let _declaredVarNames_ be a new empty List.
+          1. For each _d_ in _varDeclarations_, do
+            1. If _d_ is a |VariableDeclaration|, a |ForBinding|, or a |BindingIdentifier|, then
+              1. For each String _vn_ in the BoundNames of _d_, do
+                1. If _vn_ is not an element of _declaredFunctionNames_, then
+                  1. If _varEnvRec_ is a global Environment Record, then
+                    1. Let _vnDefinable_ be ? _varEnvRec_.CanDeclareGlobalVar(_vn_).
+                    1. If _vnDefinable_ is *false*, throw a *TypeError* exception.
+                  1. If _vn_ is not an element of _declaredVarNames_, then
+                    1. Append _vn_ to _declaredVarNames_.
+          1. NOTE: No abnormal terminations occur after this algorithm step unless _varEnvRec_ is a global Environment Record and the global object is a Proxy exotic object.
+          1. Let _lexDeclarations_ be the LexicallyScopedDeclarations of _body_.
+          1. For each element _d_ in _lexDeclarations_ do
+            1. NOTE Lexically declared names are only instantiated here but not initialized.
+            1. For each element _dn_ of the BoundNames of _d_ do
+              1. If IsConstantDeclaration of _d_ is *true*, then
+                1. Perform ? _lexEnvRec_.CreateImmutableBinding(_dn_, *true*).
+              1. Else,
+                1. Perform ? _lexEnvRec_.CreateMutableBinding(_dn_, *false*).
+          1. For each Parse Node _f_ in _functionsToInitialize_, do
+            1. Let _fn_ be the sole element of the BoundNames of _f_.
+            1. Let _fo_ be the result of performing InstantiateFunctionObject for _f_ with argument _lexEnv_.
+            1. If _varEnvRec_ is a global Environment Record, then
+              1. Perform ? _varEnvRec_.CreateGlobalFunctionBinding(_fn_, _fo_, *true*).
+            1. Else,
+              1. Let _bindingExists_ be _varEnvRec_.HasBinding(_fn_).
+              1. If _bindingExists_ is *false*, then
+                1. Let _status_ be ! _varEnvRec_.CreateMutableBinding(_fn_, *true*).
+                1. Assert: _status_ is not an abrupt completion because of validation preceding step 12.
+                1. Perform ! _varEnvRec_.InitializeBinding(_fn_, _fo_).
+              1. Else,
+                1. Perform ! _varEnvRec_.SetMutableBinding(_fn_, _fo_, *false*).
+          1. For each String _vn_ in _declaredVarNames_, in list order do
+            1. If _varEnvRec_ is a global Environment Record, then
+              1. Perform ? _varEnvRec_.CreateGlobalVarBinding(_vn_, *true*).
+            1. Else,
+              1. Let _bindingExists_ be _varEnvRec_.HasBinding(_vn_).
+              1. If _bindingExists_ is *false*, then
+                1. Let _status_ be ! _varEnvRec_.CreateMutableBinding(_vn_, *true*).
+                1. Assert: _status_ is not an abrupt completion because of validation preceding step 12.
+                1. Perform ! _varEnvRec_.InitializeBinding(_vn_, *undefined*).
+          1. Return NormalCompletion(~empty~).
+        </emu-alg>
+      </emu-clause>
+    </emu-clause>
 
 </emu-clause>
 
