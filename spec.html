@@ -94,7 +94,7 @@ emu-example pre {
         PrivateName
 
       FieldDefinition[Yield, Await] :
-        ClassElementName[?Yield, ?Await] Initializer[In, ?Yield]?
+        ClassElementName[?Yield, ?Await] Initializer[In, ~Yield, ~Await]?
 
       PrivateName ::
         `#` IdentifierName
@@ -136,11 +136,12 @@ emu-example pre {
   <emu-clause id="sec-static-semantics-early-errors">
     <h1>Static Semantics: Early Errors</h1>
     <emu-grammar>
-      FieldDefinition[Yield] :
-        PropertyName[?Yield] Initializer?
+      FieldDefinition :
+        PropertyName Initializer?
     </emu-grammar>
     <ul>
       <li>It is a Syntax Error if ContainsArguments of |Initializer| is *true*.</li>
+      <li>It is a Syntax Error if |Initializer| is present and |Initializer| Contains |SuperCall| is *true*.</li>
     </ul>
 
     <emu-grammar>
@@ -177,7 +178,10 @@ emu-example pre {
     <emu-grammar>UnaryExpression : `delete` UnaryExpression</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins>or <emu-grammar>MemberExpression : MemberExpression `.` PrivateName</emu-grammar></ins>.
+        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>.
+      </li>
+      <li>
+        <ins>It is a Syntax Error if the derived |UnaryExpression| is <emu-grammar>MemberExpression : MemberExpression `.` PrivateName</emu-grammar> or <emu-grammar>CallExpression : CallExpression `.` PrivateName</emu-grammar></ins>.
       </li>
       <li>
         <p>It is a Syntax Error if the derived |UnaryExpression| is
@@ -201,7 +205,7 @@ emu-example pre {
           1. For each binding named _N_ in _env_,
             1. If _names_ does not contain _N_, append _N_ to _names_.
           1. Let _env_ be _env_'s outer environment reference.
-      1. If AllPrivateNamesValid of |ScriptBody| with the argument _names_ is *false*, throw a SyntaxError.
+      1. If AllPrivateNamesValid of |ScriptBody| with the argument _names_ is *false*, throw a *SyntaxError* exception.
     </emu-alg>
     <emu-grammar>Module : ModuleBody?</emu-grammar>
     <ul>
@@ -315,7 +319,6 @@ emu-example pre {
   <emu-grammar>
       ClassElement : MethodDefinition
       ClassElement : `static` MethodDefinition
-      ClassElement : `;`
   </emu-grammar>
   <emu-alg>
     1. Perform ? PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
@@ -347,7 +350,7 @@ emu-example pre {
          [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
          [[Static]]: _isStatic_,
-         [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_,
+         [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
        }.
   </emu-alg>
 </emu-clause>
@@ -358,14 +361,14 @@ emu-example pre {
   <p>With parameter _functionObject_ and List _argumentsList_.</p>
 
   <emu-grammar>
-    Initializer[In, Yield] :
-      `=` AssignmentExpression[?In, ?Yield]
+    Initializer :
+      `=` AssignmentExpression
   </emu-grammar>
   <emu-alg>
     1. Assert: _argumentsList_ is empty.
     1. Return the result of evaluating |AssignmentExpression|.
   </emu-alg>
-  <emu-note>FunctionDeclarationInstantiate would not have any observable behavior here, so its call is omitted.</emu-note>
+  <emu-note>FunctionDeclarationInstantiation would not have any observable behaviour here, so its call is omitted.</emu-note>
 </emu-clause>
 
     <!-- es6num="9.2.11" -->
@@ -404,16 +407,11 @@ emu-example pre {
     1. If _fieldName_ is a Private Name,
       1. Perform ? PrivateFieldAdd(_fieldName_, _receiver_, _initialValue_).
     1. Else,
-      1. NOTE: _fieldName_ is a property key.
-      1. Let _desc_ be PropertyDescriptor{
-           [[Configurable]]: *true*,
-           [[Enumerable]]: *true*,
-           [[Writable]]: *true*,
-           [[Value]]: _initValue_
-         }.
-      1. Perform ? DefinePropertyOrThrow(_receiver_, _fieldName_, _desc_).
+      1. Assert: IsPropertyKey(_fieldName_) is *true*.
+      1. Perform ? CreateDataPropertyOrThrow(_receiver_, _fieldName_, _initValue_).
     <emu-alg>
 </emu-clause>
+<emu-note type=editor>TODO: Set the running execution context's PrivateNameEnvironment when calling a function.</emu-note>
 
 
 <emu-clause id="initialize-public-static-fields">
@@ -607,8 +605,8 @@ emu-example pre {
       <emu-alg>
         1. Let _list_ be NonConstructorElementDefinitions of |ClassElementList|.
         1. If |ClassElement| is <emu-grammar>ClassElement : `;`</emu-grammar> , return _list_.
-        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
-        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>, return a new empty List.</ins>
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>, return _list_.</ins>
+        1. <ins>If |ClassElement| is <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>, return _list_.</ins>
         1. If IsStatic of |ClassElement| is *false* and PropName of |ClassElement| is `"constructor"`, return _list_.
         1. Append |ClassElement| to the end of _list_.
         1. Return _list_.
@@ -627,7 +625,7 @@ emu-example pre {
         1. Return *false*.
       </emu-alg>
 
-      <emu-grammar>ClassElement : static FieldDefinition</emu-grammar>
+      <emu-grammar>ClassElement : `static` FieldDefinition</emu-grammar>
       <emu-alg>
         1. Return *true*.
       </emu-alg>
@@ -655,6 +653,7 @@ emu-example pre {
         1. Let _constructorParent_ be the intrinsic object %FunctionPrototype%.
       1. Else,
         1. Set the running execution context's LexicalEnvironment to _classScope_.
+        1. <ins>NOTE: The running execution context's PrivateNameEnvironment is _outerPrivateEnvironment_ when evaluating |ClassHeritage|.</ins>
         1. Let _superclass_ be the result of evaluating |ClassHeritage|.
         1. Set the running execution context's LexicalEnvironment to _lex_.
         1. ReturnIfAbrupt(_superclass_).
@@ -689,7 +688,7 @@ emu-example pre {
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
       1. If |ClassBody_opt| is not present, let _methods_ be a new empty List.
       1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructor<del>Method</del><ins>Element</ins>Definitions of |ClassBody|.
-      1. Let _fieldRecords_ be a new empty List.
+      1. <ins>Let _fieldRecords_ be a new empty List.</ins>
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
         1. If IsStatic of <del>_m_</del><ins>_e_</ins> is *false*, then
           1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
@@ -699,7 +698,7 @@ emu-example pre {
           1. Set the running execution context's LexicalEnvironment to _lex_.
           1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
           1. Return Completion(_status_).
-        1. <ins>Append _fields_ to _fieldRecords_</ins>
+        1. <ins>Append to _fieldRecords_ the elements of _fields_.</ins>
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
@@ -709,7 +708,7 @@ emu-example pre {
       1. <ins>Let _result_ be InitializeStaticFields(_F_).</ins>
       1. <ins>If _result_ is an abrupt completion, then</ins>
         1. <ins>Set the running execution context's LexicalEnvironment to _lex_.</ins>
-        1. <ins>Return Completion(_result_)</ins>
+        1. <ins>Return Completion(_result_).</ins>
       1. <ins>Set the running execution context's LexicalEnvironment to _lex_.</ins>
       1. Return _F_.
     </emu-alg>
@@ -768,7 +767,9 @@ emu-example pre {
       1. ReturnIfAbrupt(_argList_).
       1. Let _result_ be ? Construct(_func_, _argList_, _newTarget_).
       1. Let _thisER_ be GetThisEnvironment( ).
-      1. <ins>Perform ? InitializeInstanceFields(_thisValue_, _F_).</ins>
+      1. Let _F_ be _thisER_.[[FunctionObject]].
+      1. Assert: _F_ is an ECMAScript function object.
+      1. <ins>Perform ? InitializeInstanceFields(_result_, _F_).</ins>
       1. Return ? _thisER_.BindThisValue(_result_).
     </emu-alg>
   </emu-clause>
@@ -840,7 +841,7 @@ emu-example pre {
     1. <ins>Set _obj_.[[PrivateFieldValues]] to an empty List.</ins>
     1. Return _obj_.
   </emu-alg>
-  <emu-note type=editor>TODO: All ECMAScript objects, including Proxies, and any user exotic object, should have a [[PrivateFieldValues]] internal slot iniitlaized to an empty List.</emu-note>
+  <emu-note type=editor>TODO: All ECMAScript objects, including Proxies, and any user exotic object, should have a [[PrivateFieldValues]] internal slot initialized to an empty List.</emu-note>
 </emu-clause>
 
 <emu-clause id="sec-newprivatename" aoid="NewPrivateName">
