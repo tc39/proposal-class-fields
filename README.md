@@ -45,11 +45,7 @@ class Counter extends HTMLElement {
     this.x++;
     window.requestAnimationFrame(this.render.bind(this));
   }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
-  }
+  onclick = this.clicked.bind(this)
 
   connectedCallback() { this.render(); }
 
@@ -74,11 +70,7 @@ class Counter extends HTMLElement {
     this.#x++;
     window.requestAnimationFrame(this.render.bind(this));
   }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
-  }
+  onclick = this.clicked.bind(this)
 
   connectedCallback() { this.render(); }
 
