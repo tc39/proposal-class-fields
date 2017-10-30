@@ -156,6 +156,9 @@ emu-example pre {
       <li>
         It is a Syntax Error if PropName of |FieldDefinition| is `"prototype"` or `"constructor"`.
       </li>
+      <li>
+        It is a Syntax Error if |FieldDefinition| is <emu-grammar>FieldDefinition: ClassElementName Initializer?</emu-grammar> with <emu-grammar>ClassElementName: PrivateName</emu-grammar>.
+      </li>
     </ul>
 
     <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
