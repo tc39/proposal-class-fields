@@ -1,10 +1,10 @@
-# ESnext class features for JavaScript
+# Class field declarations for JavaScript
 
 Daniel Ehrenberg, Jeff Morrison
 
 Stage 3
 
-This document proposes a combined vision for [public fields](https://tc39.github.io/proposal-class-public-fields/) and [private fields](https://github.com/tc39/proposal-private-fields), drawing on the earlier [Orthogonal Classes](https://github.com/erights/Orthogonal-Classes) and [Class Evaluation Order](https://onedrive.live.com/view.aspx?resid=A7BBCE1FC8EE16DB!442046&app=PowerPoint&authkey=!AEeXmhZASk50KjA) proposals. It is written to be forward-compatible with the introduction of private methods and decorators, whose integration is explained in the [unified class features proposal](https://github.com/littledan/proposal-unified-class-features). Methods and accessors are defined in [a follow-on proposal](https://github.com/littledan/proposal-private-methods/).
+This document proposes a combined vision for [public fields](https://tc39.github.io/proposal-class-public-fields/) and [private fields](https://github.com/tc39/proposal-private-fields), drawing on the earlier [Orthogonal Classes](https://github.com/erights/Orthogonal-Classes) and [Class Evaluation Order](https://onedrive.live.com/view.aspx?resid=A7BBCE1FC8EE16DB!442046&app=PowerPoint&authkey=!AEeXmhZASk50KjA) proposals. It is written to be forward-compatible with the introduction of private methods and decorators, whose integration is explained in the [unified class features proposal](https://github.com/littledan/proposal-decorators). Methods and accessors are defined in [a follow-on proposal](https://github.com/littledan/proposal-private-methods/).
 
 ## A guiding example: Custom elements with classes
 
