@@ -110,8 +110,13 @@ The variety of forms is visible in this example:
 
 ```js
 class C {
-  static x = 1, #y, [a];
-  z, #w = 2, [b];
+  static x = 1;
+  static #y;
+  static [a];
+  
+  z
+  #w = 2
+  [b];
 }
 ```
 
