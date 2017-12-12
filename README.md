@@ -99,6 +99,8 @@ Note that ESnext provides private fields only as declared up-front in a field de
 
 See the [draft specification](https://tc39.github.io/proposal-class-fields/) for full details.
 
+For the rational for the syntax used for private fields, see the [relevant FAQ](PRIVATE_SYNTAX_FAQ.md).
+
 ### Orthogonality
 
 This proposal provides fields which are orthogonal on the following axes:
