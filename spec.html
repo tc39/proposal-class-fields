@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf8">
 <pre class=metadata>
-title: Integrated public and private fields proposal
+title: Public and private instance fields proposal
 stage: 3
 contributors: Daniel Ehrenberg, Jeff Morrison, Kevin Smith, Kevin Gibbons
 </pre>
@@ -109,7 +109,6 @@ emu-example pre {
         MethodDefinition[?Yield, ?Await]
         `static` MethodDefinition[?Yield, ?Await]
         <ins>FieldDefinition[?Yield, ?Await] `;`</ins>
-        <ins>`static` FieldDefinition[?Yield, ?Await] `;`</ins>
         `;`
 
       MemberExpression[Yield, Await] :
@@ -149,13 +148,6 @@ emu-example pre {
     </emu-grammar>
     <ul>
       <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries.</li>
-    </ul>
-
-    <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>
-    <ul>
-      <li>
-        It is a Syntax Error if PropName of |FieldDefinition| is `"prototype"` or `"constructor"`.
-      </li>
     </ul>
 
     <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
@@ -297,14 +289,9 @@ emu-example pre {
   <h1>Runtime Semantics: ClassElementEvaluation</h1>
   <p>With parameters _object_ and _enumerable_.</p>
 
-  <emu-grammar>ClassElement : `static` FieldDefinition `;`</emu-grammar>
-  <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of |FieldDefinition| with parameter *true* and _object_.
-  </emu-alg>
-
   <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
   <emu-alg>
-    1. Return ClassFieldDefinitionEvaluation of |FieldDefinition| with parameter *false* and _object_.
+    1. Return ClassFieldDefinitionEvaluation of |FieldDefinition| with parameter _object_.
   </emu-alg>
   <emu-grammar>
       ClassElement : MethodDefinition
@@ -319,7 +306,7 @@ emu-example pre {
 <emu-clause id="runtime-semantics-class-field-definition-evaluation">
   <h1>Runtime Semantics: ClassFieldDefinitionEvaluation</h1>
 
-  <p>With parameters _isStatic_ and _homeObject_.</p>
+  <p>With parameter _homeObject_.</p>
 
   <emu-grammar>
     FieldDefinition : ClassElementName Initializer?
@@ -339,7 +326,6 @@ emu-example pre {
     1. Return a List containing Record {
          [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
-         [[Static]]: _isStatic_,
          [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
        }.
   </emu-alg>
@@ -404,20 +390,6 @@ emu-example pre {
 <emu-note type=editor>TODO: Set the running execution context's PrivateNameEnvironment when calling a function (<a href="https://github.com/anba/proposal-class-fields.git">Issue #40</a>).</emu-note>
 
 
-<emu-clause id="initialize-public-static-fields">
-  <h1>InitializeStaticFields(_F_)</h1>
-
-  <emu-alg>
-    1. Assert: Type(_F_) is Object.
-    1. Assert: _F_ is an ECMAScript function object.
-    1. Let _fieldRecords_ be the value of _F_'s [[Fields]] internal slot.
-    1. For each item _fieldRecord_ in order from _fieldRecords_,
-      1. If _fieldRecord_.[[static]] is *true*, then
-        1. Perform ? DefineField(_F_, _fieldRecord_).
-    1. Return.
-  </emu-alg>
-</emu-clause>
-
 <emu-clause id="initialize-public-instance-fields">
   <h1>InitializeInstanceFields ( _O_, _constructor_ )</h1>
 
@@ -426,8 +398,7 @@ emu-example pre {
     1. Assert: Assert _constructor_ is an ECMAScript function object.
     1. Let _fieldRecords_ be the value of _constructor_'s [[Fields]] internal slot.
     1. For each item _fieldRecord_ in order from _fieldRecords_,
-      1. If _fieldRecord_.[[static]] is *false*, then
-        1. Perform ? DefineField(_O_, _fieldRecord_).
+      1. Perform ? DefineField(_O_, _fieldRecord_).
     1. Return.
   </emu-alg>
   <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
@@ -592,11 +563,6 @@ emu-example pre {
       <emu-alg>
         1. Return *false*.
       </emu-alg>
-
-      <emu-grammar>ClassElement : `static` FieldDefinition</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
     </ins>
   </emu-clause>
 
@@ -673,10 +639,6 @@ emu-example pre {
       1. <ins>Set the value of _F_'s [[Fields]] internal slot to _fieldRecords_.</ins>
       1. <ins>Set the running execution context's LexicalEnvironment to _classScope_.</ins>
       1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
-      1. <ins>Let _result_ be InitializeStaticFields(_F_).</ins>
-      1. <ins>If _result_ is an abrupt completion, then</ins>
-        1. <ins>Set the running execution context's LexicalEnvironment to _lex_.</ins>
-        1. <ins>Return Completion(_result_).</ins>
       1. <ins>Set the running execution context's LexicalEnvironment to _lex_.</ins>
       1. Return _F_.
     </emu-alg>
