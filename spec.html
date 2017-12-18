@@ -1223,3 +1223,191 @@ emu-example pre {
 </emu-clause>
 </emu-clause>
 
+  <!-- es6num="11.9" -->
+  <emu-clause id="sec-automatic-semicolon-insertion">
+    <h1>Automatic Semicolon Insertion</h1>
+    <p>Most ECMAScript statements and declarations <del>must be</del><ins>are logically</ins> terminated with a semicolon. Such semicolons may always appear explicitly in the source text. For convenience, however, such semicolons may be omitted from the source text in certain situations. These situations are described by saying that semicolons are automatically inserted into the source code token stream in those situations.</p>
+
+    <!-- es6num="11.9.1" -->
+    <emu-clause id="sec-rules-of-automatic-semicolon-insertion" namespace=asi-rules>
+      <h1>Rules of Automatic Semicolon Insertion</h1>
+      <p>In the following rules, &ldquo;token&rdquo; means the actual recognized lexical token determined using the current lexical goal symbol as described in clause <emu-xref href="#sec-ecmascript-language-lexical-grammar"></emu-xref>.</p>
+      <p>There are three basic rules of semicolon insertion:</p>
+      <ol>
+        <li>
+          <p>When, as the source text is parsed from left to right, a token (called the <em>offending token</em>) is encountered that is not allowed by any production of the grammar, then a semicolon is automatically inserted before the offending token if one or more of the following conditions is true:</p>
+          <ul>
+            <li>
+              The offending token is separated from the previous token by at least one |LineTerminator|.
+            </li>
+            <li>
+              The offending token is `}`.
+            </li>
+            <li>
+              The previous token is `)` and the inserted semicolon would then be parsed as the terminating semicolon of a do-while statement (<emu-xref href="#sec-do-while-statement"></emu-xref>).
+            </li>
+          </ul>
+        </li>
+        <li>
+          When, as the source text is parsed from left to right, the end of the input stream of tokens is encountered and the parser is unable to parse the input token stream as a single instance of the goal nonterminal, then a semicolon is automatically inserted at the end of the input stream.
+        </li>
+        <li>
+          When, as the source text is parsed from left to right, a token is encountered that is allowed by some production of the grammar, but the production is a <em>restricted production</em> and the token would be the first token for a terminal or nonterminal immediately following the annotation &ldquo;[no |LineTerminator| here]&rdquo; within the restricted production (and therefore such a token is called a restricted token), and the restricted token is separated from the previous token by at least one |LineTerminator|, then a semicolon is automatically inserted before the restricted token.
+        </li>
+      </ol>
+      <p>However, there is an additional overriding condition on the preceding rules: a semicolon is never inserted automatically if the semicolon would then be parsed as an empty statement or if that semicolon would become one of the two semicolons in the header of a `for` statement (see <emu-xref href="#sec-for-statement"></emu-xref>).</p>
+      <emu-note>
+        <p>The following are the only restricted productions in the grammar:</p>
+        <emu-grammar>
+          UpdateExpression[Yield, Await] :
+            LeftHandSideExpression[?Yield, ?Await] [no LineTerminator here] `++`
+            LeftHandSideExpression[?Yield, ?Await] [no LineTerminator here] `--`
+
+          ContinueStatement[Yield, Await] :
+            `continue` `;`
+            `continue` [no LineTerminator here] LabelIdentifier[?Yield, ?Await] `;`
+
+          BreakStatement[Yield, Await] :
+            `break` `;`
+            `break` [no LineTerminator here] LabelIdentifier[?Yield, ?Await] `;`
+
+          ReturnStatement[Yield, Await] :
+            `return` `;`
+            `return` [no LineTerminator here] Expression[+In, ?Yield, ?Await] `;`
+
+          ThrowStatement[Yield, Await] :
+            `throw` [no LineTerminator here] Expression[+In, ?Yield, ?Await] `;`
+
+          ArrowFunction[In, Yield, Await] :
+            ArrowParameters[?Yield, ?Await] [no LineTerminator here] `=&gt;` ConciseBody[?In]
+
+          YieldExpression[In, Await] :
+            `yield` [no LineTerminator here] `*` AssignmentExpression[?In, +Yield, ?Await]
+            `yield` [no LineTerminator here] AssignmentExpression[?In, +Yield, ?Await]
+        </emu-grammar>
+        <p>The practical effect of these restricted productions is as follows:</p>
+        <ul>
+          <li>
+            When a `++` or `--` token is encountered where the parser would treat it as a postfix operator, and at least one |LineTerminator| occurred between the preceding token and the `++` or `--` token, then a semicolon is automatically inserted before the `++` or `--` token.
+          </li>
+          <li>
+            When a `continue`, `break`, `return`, `throw`, or `yield` token is encountered and a |LineTerminator| is encountered before the next token, a semicolon is automatically inserted after the `continue`, `break`, `return`, `throw`, or `yield` token.
+          </li>
+        </ul>
+        <p>The resulting practical advice to ECMAScript programmers is:</p>
+        <ul>
+          <li>
+            A postfix `++` or `--` operator should appear on the same line as its operand.
+          </li>
+          <li>
+            An |Expression| in a `return` or `throw` statement or an |AssignmentExpression| in a `yield` expression should start on the same line as the `return`, `throw`, or `yield` token.
+          </li>
+          <li>
+            A |LabelIdentifier| in a `break` or `continue` statement should be on the same line as the `break` or `continue` token.
+          </li>
+        </ul>
+      </emu-note>
+      <emu-note>
+        <ins>Automatic semicolon insertion applies for all source text, including class bodies. In particular, semicolons may be omitted after class field declarations in certain conditions. Although the same insertion logic described above applies within class bodies, the practicalities of writing class bodies in a semicolon-free style differs between class bodies and other ECMAScript code; see <emu-xref href="#sec-asi-hazards-in-class-bodies"></emu-xref> for some consequences of this property.</ins>
+      </emu-note>
+    </emu-clause>
+
+    <!-- es6num="11.9.2" -->
+    <emu-clause id="sec-examples-of-automatic-semicolon-insertion">
+      <h1>Examples of Automatic Semicolon Insertion</h1>
+      <ins><em>This section is non-normative.</em></ins>
+
+      <p>The source</p>
+      <pre><code class="javascript">{ 1 2 } 3</code></pre>
+      <p>is not a valid sentence in the ECMAScript grammar, even with the automatic semicolon insertion rules. In contrast, the source</p>
+      <pre><code class="javascript">
+        { 1
+        2 } 3
+      </code></pre>
+      <p>is also not a valid ECMAScript sentence, but is transformed by automatic semicolon insertion into the following:</p>
+      <pre><code class="javascript">
+        { 1
+        ;2 ;} 3;
+      </code></pre>
+      <p>which is a valid ECMAScript sentence.</p>
+      <p>The source</p>
+      <pre><code class="javascript">
+        for (a; b
+        )
+      </code></pre>
+      <p>is not a valid ECMAScript sentence and is not altered by automatic semicolon insertion because the semicolon is needed for the header of a `for` statement. Automatic semicolon insertion never inserts one of the two semicolons in the header of a `for` statement.</p>
+      <p>The source</p>
+      <pre><code class="javascript">
+        return
+        a + b
+      </code></pre>
+      <p>is transformed by automatic semicolon insertion into the following:</p>
+      <pre><code class="javascript">
+        return;
+        a + b;
+      </code></pre>
+      <emu-note>
+        <p>The expression `a + b` is not treated as a value to be returned by the `return` statement, because a |LineTerminator| separates it from the token `return`.</p>
+      </emu-note>
+      <p>The source</p>
+      <pre><code class="javascript">
+        a = b
+        ++c
+      </code></pre>
+      <p>is transformed by automatic semicolon insertion into the following:</p>
+      <pre><code class="javascript">
+        a = b;
+        ++c;
+      </code></pre>
+      <emu-note>
+        <p>The token `++` is not treated as a postfix operator applying to the variable `b`, because a |LineTerminator| occurs between `b` and `++`.</p>
+      </emu-note>
+      <p>The source</p>
+      <pre><code class="javascript">
+        if (a &gt; b)
+        else c = d
+      </code></pre>
+      <p>is not a valid ECMAScript sentence and is not altered by automatic semicolon insertion before the `else` token, even though no production of the grammar applies at that point, because an automatically inserted semicolon would then be parsed as an empty statement.</p>
+      <p>The source</p>
+      <pre><code class="javascript">
+        a = b + c
+        (d + e).print()
+      </code></pre>
+      <p>is <em>not</em> transformed by automatic semicolon insertion, because the parenthesized expression that begins the second line can be interpreted as an argument list for a function call:</p>
+      <pre><code class="javascript">a = b + c(d + e).print()</code></pre>
+      <p>In the circumstance that an assignment statement must begin with a left parenthesis, it is a good idea for the programmer to provide an explicit semicolon at the end of the preceding statement rather than to rely on automatic semicolon insertion.</p>
+    </emu-clause>
+
+    <emu-clause id="sec-hazards-of-automatic-semicolon-insertion">
+      <h1>Hazards of Automatic Semicolon Insertion</h1>
+      <em>This section is non-normative.</em>
+      <p>ECMAScript programs can be written in a style with very few semicolons, based on a heavy dependence on automatic semicolon insertion. However, as described above, semicolons are not inserted at every newline, and some of these cases which do not have an automatically inserted semicolon can be counter-intuitive or confusing.</p>
+
+      <p>As new syntactic features are added to ECMAScript, additional cases requiring explicit semicolons emerge over time. As such, consistently explicit semicolon use is recommended.</p>
+
+      <p>The term "automatic semicolon insertion hazard" refers, informally, to a place where a developer may expect a semicolon to be inserted, but according to the rules described above, it is not. The rest of this section describes a number of automatic semicolon insertion hazards in this version of ECMAScript.</p>
+      <emu-clause id="sec-asi-hazards-in-statement-lists">
+        <h1>Automatic Semicolon Insertion Hazards in Statement Lists</h1>
+        <p>In a |StatementList|, many |StatementListItem|s end in semicolons, which may be omitted using automatic semicolon insertion. As a consequence of the rules above, at the end of a line ending an expression, a semicolon will be required if the following line begins with any of the following:
+        <ul>
+          <li><strong>An opening parenthesis (<code>(</code>)</strong>. Without a semicolon, the two lines together will be treated as a function call.</li>
+          <li><strong>An opening square bracket (<code>[</code>)</strong>. Without a semicolon, the two lines together will be treated as property access, rather than an array literal.</li>
+          <li><strong>A template string (<code>`</code>)</strong>. Without a semicolon, the two lines together will be interpreted as tagged template literal, with the previous expression as the function tag.</li>
+          <li><strong>Unary <code>+</code> or <code>-</code></strong>. Without a semicolon, the two lines together will be interpreted as a usage of the corresponding infix operator.</li>
+        </ul>
+      </emu-clause>
+
+      <emu-clause id="sec-asi-hazards-in-class-bodies">
+        <h1>Automatic Semicolon Insertion Hazards in the Top Level of Class Bodies</h1>
+        <p>At the top level of class bodies, the only significant case where semicolons are used is in field declarations. As a consequence of the rules above, at the end of a field declaration with an initializer expression, a semicolon is required if the following line begins with any of the following:</p>
+        <ul>
+          <li><strong>A computed property name field or method</strong>. Without a semicolon, a field decxlaration with a computed property name will be treated as a property access; a method with a computed property name would be a Syntax Error.</li>
+          <li><strong>A generator method</strong>. A missing semicolon is a Syntax Error.</li>
+          <li><strong>A field named <code>in</code> or <code>instanceof</code></strong>. Without a semicolon, those tokens will instead be interpreted as an operator.</li>
+        </ul>
+
+        <p>Additionally, the declaration of a field named <code>get</code>, <code>set</code> or <code>static</code></strong>, if it does not have an initializer and is not at the end of the class body, requires a semicolon. Without a semicolon, these tokens will be treated as modifiers to the following class element declaration.</p>
+        </ul>
+      </emu-clause>
+    </emu-clause>
+  </emu-clause>
