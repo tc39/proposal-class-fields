@@ -1394,6 +1394,7 @@ emu-example pre {
           <li><strong>An opening square bracket (<code>[</code>)</strong>. Without a semicolon, the two lines together will be treated as property access, rather than an array literal.</li>
           <li><strong>A template string (<code>`</code>)</strong>. Without a semicolon, the two lines together will be interpreted as tagged template literal, with the previous expression as the function tag.</li>
           <li><strong>Unary <code>+</code> or <code>-</code></strong>. Without a semicolon, the two lines together will be interpreted as a usage of the corresponding infix operator.</li>
+          <li><strong>A RegExp literal</strong>. Without a semicolon, the two lines together may be parsed instead as a division, for example if the RegExp has flags.</li>
         </ul>
       </emu-clause>
 
@@ -1401,12 +1402,12 @@ emu-example pre {
         <h1>Automatic Semicolon Insertion Hazards in the Top Level of Class Bodies</h1>
         <p>At the top level of class bodies, the only significant case where semicolons are used is in field declarations. As a consequence of the rules above, at the end of a field declaration with an initializer expression, a semicolon is required if the following line begins with any of the following:</p>
         <ul>
-          <li><strong>A computed property name field or method</strong>. Without a semicolon, a field decxlaration with a computed property name will be treated as a property access; a method with a computed property name would be a Syntax Error.</li>
+          <li><strong>A computed property name field or method</strong>. Without a semicolon, a field declaration with a computed property name will be treated as a property access; a method with a computed property name would be a Syntax Error.</li>
           <li><strong>A generator method</strong>. A missing semicolon is a Syntax Error.</li>
           <li><strong>A field named <code>in</code> or <code>instanceof</code></strong>. Without a semicolon, those tokens will instead be interpreted as an operator.</li>
         </ul>
 
-        <p>Additionally, the declaration of a field named <code>get</code>, <code>set</code> or <code>static</code></strong>, if it does not have an initializer and is not at the end of the class body, requires a semicolon. Without a semicolon, these tokens will be treated as modifiers to the following class element declaration.</p>
+        <p>Additionally, the declaration of a field named <code>get</code>, <code>set</code> or <code>static</code></strong>, if it does not have an initializer, is not at the end of the class body, and is not followed by a non-static non-async generator method, requires a semicolon. Without a semicolon, these tokens will be treated as modifiers to the following class element declaration. Note that <code>async</code> does not have this property, as async method declarations do not permit a newline between the <code>async</code> token and the method name.</p>
         </ul>
       </emu-clause>
     </emu-clause>
