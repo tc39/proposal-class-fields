@@ -116,8 +116,8 @@ class C {
   static #y;
   static [a];
   
-  z
-  #w = 2
+  z;
+  #w = 2;
   [b];
 }
 ```
