@@ -104,7 +104,7 @@ For the rational for the syntax used for private fields, see the [relevant FAQ](
 ### Orthogonality
 
 This proposal provides fields which are orthogonal on the following axes:
-- Placement: Static vs instance
+- Placement: Static vs instance -- static postponed to [follow-on proposal](https://github.com/tc39/proposal-static-class-features/)
 - Visibility/name: public vs private vs computed property name
 - With or without initializer
 
@@ -112,10 +112,6 @@ The variety of forms is visible in this example:
 
 ```js
 class C {
-  static x = 1;
-  static #y;
-  static [a];
-  
   z;
   #w = 2;
   [b];
