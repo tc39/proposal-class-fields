@@ -76,7 +76,9 @@ On the other hand, it might be surprising that they differ, and this is a downsi
 
 ## Why not have access be `this#x`, without the dot?
 
-It's an [ASI hazard](https://github.com/tc39/proposal-private-fields/issues/39#issuecomment-237121552), given the shorthand syntax of `#x` to mean `this.#x`.
+This would work, but would be an [ASI hazard](https://github.com/tc39/proposal-private-fields/issues/39#issuecomment-237121552) if we later introduced a shorthand syntax of `#x` to mean `this.#x`.
+
+More generally, the committee has mostly come down on the side of `this.#` as more clearly implying field access. 
 
 ## Why does this proposal allow accessing private fields of other instances of the same class? Don't other languages normally forbid that?
 
