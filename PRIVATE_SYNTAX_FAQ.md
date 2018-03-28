@@ -1,12 +1,36 @@
-## Why aren't declarations `private x`?
+## What's this about `#`?
 
-This sort of declaration is what other languages use (notably Java), and implies that access would be done with `this.x`. Assuming that isn't the case (see below), in JavaScript this would silently create or access a public field, rather than throwing an error. This is a major potential source of bugs or invisibly making public fields which were intended to be private.
+`#` is the new `_`. Whereas
+
+```js
+class A {
+  _hidden = 0;
+  m() {
+    return this._hidden;
+  }
+}
+```
+
+creates a class with a field which is hidden _by convention_, but in fact is fully public,
+
+```js
+class B {
+  #hidden = 0;
+  m() {
+    return this.#hidden;
+  }
+}
+```
+
+creates a class with a field which is actually private to the class, with privacy enforced by the language.
+
+We can't just change how `_` works for web compatibility reasons.
 
 ## Why isn't access `this.x`?
 
 Having a private field named `x` must not prevent there from being a public field named `x`, so accessing a private field can't just be a normal lookup.
 
-Less significantly, this would also break an invariant of current syntax: `this.x` and `this['x']` are currently always semantically identical.
+This is only an issue in JavaScript because of its lack of static types. Statically typed languages use type declarations to distinguish the external-public/internal-private cases without the need of a sigil. But a dynamically typed language doesn't have enough static information to differentiate those cases.
 
 ### Why does this proposal allow a class to have a private field `#x` *and* a public field `x`?
 
@@ -36,8 +60,6 @@ It also would allow methods of the class to be tricked into operating on public 
 
 Class methods often manipulate objects which are not instances of the class. It would be surprising if the code `obj.x` suddenly stopped referring to public field `x` of `obj`, when `obj` is not expected to be an instance of the class, just because that code happened to occur somewhere within a class which declares a private field named `x`, possibly deep within said class.
 
-This is only an issue in JavaScript because of its lack of static types. Statically typed languages use type declarations to distinguish the external-public/internal-private cases without the need of a sigil. But a dynamically typed language doesn't have enough static information to differentiate those cases.
-
 ### Why not give the `this` keyword special semantics?
 
 `this` is already a source of enough confusion in JS; we'd prefer not to make it worse. Also, it's a major refactoring hazard: it would be surprising if `this.x` had different semantics from `const thiz = this; thiz.x`.
@@ -48,7 +70,7 @@ This also wouldn't allow accessing fields of objects other than `this`.
 
 It is a goal of this proposal to allow accessing private fields of other instances of the same class (see below), which requires some syntax. Also, using bare identifiers to refer to properties is not the usual JS way (with the exception of `with`, which is generally considered to have been a mistake).
 
-### Why doesn't `this['#x']` access the private field named `#x`, given that `this.#x` does?
+## Why doesn't `this['#x']` access the private field named `#x`, given that `this.#x` does?
 
 1. This would complicate property access semantics.
 
@@ -68,7 +90,7 @@ class Dict extends null {
 (new Dict).get('#data'); // returns something_secret
 ```
 
-#### But doesn't giving `this.#x` and `this['#x']` different semantics break an invariant of current syntax?
+### But doesn't giving `this.#x` and `this['#x']` different semantics break an invariant of current syntax?
 
 Not exactly, but it is a concern. `this.#x` has never previously been legal syntax, so from one point of view there can be no invariant regarding it.
 
@@ -79,6 +101,22 @@ On the other hand, it might be surprising that they differ, and this is a downsi
 This would work, but would be an [ASI hazard](https://github.com/tc39/proposal-private-fields/issues/39#issuecomment-237121552) if we later introduced a shorthand syntax of `#x` to mean `this.#x`.
 
 More generally, the committee has mostly come down on the side of `this.#` as more clearly implying field access. 
+
+## Why aren't declarations `private x`?
+
+This sort of declaration is what other languages use (notably Java), and implies that access would be done with `this.x`. Assuming that isn't the case (see above), in JavaScript this would silently create or access a public field, rather than throwing an error. This is a major potential source of bugs or invisibly making public fields which were intended to be private.
+
+It also allows a symmetry between declaration and access, just as there is for public fields:
+
+```js
+class A {
+  pub = 0;
+  #priv = 1;
+  m() {
+    return this.pub + this.#priv;
+  }
+}
+```
 
 ## Why does this proposal allow accessing private fields of other instances of the same class? Don't other languages normally forbid that?
 
@@ -91,6 +129,7 @@ class Point {
 	public boolean equals(Point p) { return this.x == p.x && this.y == p.y; }
 }
 ```
+
 ## Why was the sigil `#` chosen, among all the Unicode code points?
 
 No one came out and said, `#` is the most beautiful, intuitive thing to indicate private state. Instead, it was more of a process of elimination:
