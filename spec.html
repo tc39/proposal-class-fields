@@ -697,8 +697,9 @@ emu-example pre {
       1. Let _thisER_ be GetThisEnvironment( ).
       1. Let _F_ be _thisER_.[[FunctionObject]].
       1. Assert: _F_ is an ECMAScript function object.
+      1. <del>Return<del><ins>Perform</ins> ? _thisER_.BindThisValue(_result_).
       1. <ins>Perform ? InitializeInstanceFields(_result_, _F_).</ins>
-      1. Return ? _thisER_.BindThisValue(_result_).
+      1. <ins>Return _result_.</ins>
     </emu-alg>
   </emu-clause>
 </emu-clause>
