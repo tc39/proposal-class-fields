@@ -929,19 +929,12 @@ emu-example pre {
   Private fields are deliberately inaccessible outside of the class body. It is proposed that there could be an "escape hatch" to access them though some sort of reflective mechanism; see <a href="https://github.com/tc39/proposal-private-fields/issues/33">the GitHub thread</a>. This proposal deliberately omits any such escape hatch.
 </emu-note>
 
-<emu-clause id="sec-objectcreate" aoid="ObjectCreate">
-  <h1>ObjectCreate (_proto_ [ , _internalSlotsList_ ])</h1>
-  <p>The abstract operation ObjectCreate with argument _proto_ (an object or null) is used to specify the runtime creation of new ordinary objects. The optional argument _internalSlotsList_ is a List of the names of additional internal slots that must be defined as part of the object. If the list is not provided, a new empty List is used. This abstract operation performs the following steps:</p>
+<emu-clause id="sec-notational-conventions">
+  <h1>Notational Conventions</h1>
+  <p>When the phrase <dfn>newly created object</dfn> appears in this specification, perfom the following steps on the resulting object _obj_:
   <emu-alg>
-    1. If _internalSlotsList_ was not provided, let _internalSlotsList_ be a new empty List.
-    1. Let _obj_ be a newly created object with an internal slot for each name in _internalSlotsList_.
-    1. Set _obj_'s essential internal methods to the default ordinary object definitions specified in <emu-xref href="#sec-ordinary-object-internal-methods-and-internal-slots"></emu-xref>.
-    1. Set _obj_.[[Prototype]] to _proto_.
-    1. Set _obj_.[[Extensible]] to *true*.
     1. <ins>Set _obj_.[[PrivateFieldValues]] to an empty List.</ins>
-    1. Return _obj_.
   </emu-alg>
-  <emu-note type=editor>TODO: All ECMAScript objects, including Proxies, and any user exotic object, should have a [[PrivateFieldValues]] internal slot initialized to an empty List.</emu-note>
 </emu-clause>
 
 <emu-clause id="sec-newprivatename" aoid="NewPrivateName">
