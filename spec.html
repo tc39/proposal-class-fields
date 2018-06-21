@@ -683,7 +683,7 @@ emu-example pre {
       1. Let _thisER_ be GetThisEnvironment( ).
       1. Let _F_ be _thisER_.[[FunctionObject]].
       1. Assert: _F_ is an ECMAScript function object.
-      1. <del>Return<del><ins>Perform</ins> ? _thisER_.BindThisValue(_result_).
+      1. <del>Return</del><ins>Perform</ins> ? _thisER_.BindThisValue(_result_).
       1. <ins>Perform ? InitializeInstanceFields(_result_, _F_).</ins>
       1. <ins>Return _result_.</ins>
     </emu-alg>
@@ -1442,7 +1442,7 @@ emu-example pre {
 
 <emu-clause id="sec-notational-conventions">
   <h1>Notational Conventions</h1>
-  <p>When the phrase <dfn>newly created object</dfn> appears in this specification, perfom the following steps on the resulting object _obj_:
+  <p>When the phrase <dfn>newly created object</dfn> appears in this specification, perfom the following steps on the resulting object _obj_:</p>
   <emu-alg>
     1. <ins>Set _obj_.[[PrivateFieldValues]] to an empty List.</ins>
   </emu-alg>
