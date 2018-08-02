@@ -89,12 +89,12 @@ emu-example pre {
     <h1>New Productions</h1>
 
     <emu-grammar>
+      FieldDefinition[Yield, Await] :
+        ClassElementName[?Yield, ?Await] Initializer[In, ~Yield, ~Await]?
+
       ClassElementName[Yield, Await] :
         PropertyName[?Yield, ?Await]
         PrivateName
-
-      FieldDefinition[Yield, Await] :
-        ClassElementName[?Yield, ?Await] Initializer[In, ~Yield, ~Await]?
 
       PrivateName ::
         `#` IdentifierName
