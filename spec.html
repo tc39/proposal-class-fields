@@ -89,12 +89,12 @@ emu-example pre {
     <h1>New Productions</h1>
 
     <emu-grammar>
-      ClassElementName[Yield, Await] :
+      FieldDefinition[Yield, Await] :
+        FieldName[?Yield, ?Await] Initializer[In, ~Yield, ~Await]?
+
+      FieldName[Yield, Await] :
         PropertyName[?Yield, ?Await]
         PrivateName
-
-      FieldDefinition[Yield, Await] :
-        ClassElementName[?Yield, ?Await] Initializer[In, ~Yield, ~Await]?
 
       PrivateName ::
         `#` IdentifierName
@@ -136,7 +136,7 @@ emu-example pre {
     <h1>Static Semantics: Early Errors</h1>
     <emu-grammar>
       FieldDefinition :
-        ClassElementName Initializer?
+        FieldName Initializer?
     </emu-grammar>
     <ul>
       <li>It is a Syntax Error if ContainsArguments of |Initializer| is *true*.</li>
@@ -157,7 +157,7 @@ emu-example pre {
       </li>
     </ul>
 
-    <emu-grammar>ClassElementName : PrivateName `;`</emu-grammar>
+    <emu-grammar>FieldName : PrivateName `;`</emu-grammar>
     <ul>
       <li>
         It is a Syntax Error if StringValue of |PrivateName| is `"#constructor"`.
@@ -228,21 +228,21 @@ emu-example pre {
 <emu-clause id="static-semantics-propname">
   <h1>Static Semantics: PropName</h1>
   <emu-grammar>
-    FieldDefinition : ClassElementName Initializer?
+    FieldDefinition : FieldName Initializer?
   </emu-grammar>
   <emu-alg>
-    1. Return PropName of |ClassElementName|.
+    1. Return PropName of |FieldName|.
   </emu-alg>
 
   <emu-grammar>
-      ClassElementName[Yield, Await] : PropertyName[?Yield, ?Await]
+      FieldName[Yield, Await] : PropertyName[?Yield, ?Await]
   </emu-grammar>
   <emu-alg>
     1. Return PropName of |PropertyName|.
   </emu-alg>
 
   <emu-grammar>
-      ClassElementName[Yield, Await] : PrivateName
+      FieldName[Yield, Await] : PrivateName
   </emu-grammar>
   <emu-alg>
     1. Return ~empty~.
@@ -252,14 +252,14 @@ emu-example pre {
 <emu-clause id="sec-runtime-semantics-evaluate-name">
   <h1>Runtime Semantics: Evaluation</h1>
   <emu-grammar>
-      ClassElementName[Yield, Await] : PropertyName[?Yield, ?Await]
+      FieldName[Yield, Await] : PropertyName[?Yield, ?Await]
   </emu-grammar>
   <emu-alg>
     1. Return the result of evaluating |PropertyName|.
   </emu-alg>
 
   <emu-grammar>
-      ClassElementName[Yield, Await] : PrivateName
+      FieldName[Yield, Await] : PrivateName
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateName|.
@@ -297,10 +297,10 @@ emu-example pre {
   <p>With parameter _homeObject_.</p>
 
   <emu-grammar>
-    FieldDefinition : ClassElementName Initializer?
+    FieldDefinition : FieldName Initializer?
   </emu-grammar>
   <emu-alg>
-    1. Let _fieldName_ be the result of evaluating |ClassElementName|.
+    1. Let _fieldName_ be the result of evaluating |FieldName|.
     1. ReturnIfAbrupt(_fieldName_).
     1. If |Initializer_opt| is present,
       1. Let _lex_ be the Lexical Environment of the running execution context.
@@ -312,7 +312,7 @@ emu-example pre {
       1. Let _initializer_ be ~empty~.
       1. Let _isAnonymousFunctionDeclaration_ be *false*.
     1. Return a List containing Record {
-         [[Name]]: _fieldName_, 
+         [[Name]]: _fieldName_,
          [[Initializer]]: _initializer_,
          [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
        }.
@@ -405,21 +405,21 @@ emu-example pre {
 <emu-clause id="sec-private-bound-names" aoid="PrivateBoundNames">
   <h1>Static Semantics: PrivateBoundNames</h1>
   <emu-grammar>
-      FieldDefinition : ClassElementName Initializer?
+      FieldDefinition : FieldName Initializer?
   </emu-grammar>
   <emu-alg>
-    1. Return PrivateBoundNames of |ClassElementName|
+    1. Return PrivateBoundNames of |FieldName|
   </emu-alg>
 
   <emu-grammar>
-    ClassElementName : PrivateName
+    FieldName : PrivateName
   </emu-grammar>
   <emu-alg>
     1. Return a new List containing the StringValue of |PrivateName|.
   </emu-alg>
 
   <emu-grammar>
-    ClassElementName : PropertyName
+    FieldName : PropertyName
   </emu-grammar>
   <emu-alg>
     1. Return a new empty List.
