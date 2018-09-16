@@ -286,8 +286,7 @@ emu-example pre {
       ClassElement : `static` MethodDefinition
   </emu-grammar>
   <emu-alg>
-    1. Perform ? PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
-    1. Return an empty List.
+    1. Return PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
   </emu-alg>
 </emu-clause>
 
@@ -311,7 +310,7 @@ emu-example pre {
     1. Else,
       1. Let _initializer_ be ~empty~.
       1. Let _isAnonymousFunctionDeclaration_ be *false*.
-    1. Return a List containing Record {
+    1. Return a Record {
          [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
          [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
@@ -611,14 +610,14 @@ emu-example pre {
       1. <ins>Let _fieldRecords_ be a new empty List.</ins>
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
         1. If IsStatic of <del>_m_</del><ins>_e_</ins> is *false*, then
-          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
+          1. Let _field_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
+          1. <ins>Append _field_ to _fieldRecords_.</ins>
         1. Else,
-          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
-        1. If _fields_ is an abrupt completion, then
-          1. Set the running execution context's LexicalEnvironment to _lex_.
-          1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
-          1. Return Completion(_status_).
-        1. <ins>Append to _fieldRecords_ the elements of _fields_.</ins>
+          1. Let _status_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
+          1. If _status_ is an abrupt completion, then
+            1. Set the running execution context's LexicalEnvironment to _lex_.
+            1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
+            1. Return Completion(_status_).
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
