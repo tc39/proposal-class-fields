@@ -124,3 +124,33 @@ Omitted from this proposal are private methods and accessors, private members of
 
 - Comma-separated multiple definitions: These are visible in the above example of `class C`, and are analogous to comma-separated definitions from `var`, `let` and `const`. They may be immediately useful when declaring multiple `static` fields, but later are useful in conjuction with decorators.
 - Private static fields: These just fall out naturally "from the grid" when combining the proposals. It would've taken special spec text to specifically block them.
+
+
+## Status
+
+### Consensus in TC39
+
+This proposal reached [Stage 3](https://tc39.github.io/process-document/) in July 2017. Since that time, there has been extensive thought and lengthy discussion about various alternatives, including:
+- [JS Classes 1.1](https://github.com/zenparsing/js-classes-1.1)
+- [Reconsideration of "static private"](https://github.com/tc39/proposal-static-class-features)
+- [Additional use of the `private` keyword](https://gist.github.com/rauschma/a4729faa65b30a6fda46a5799016458a)
+- [Private Symbols](https://github.com/zenparsing/proposal-private-symbols)
+
+In considering each proposal, TC39 delegates looked deeply into the motivation, JS developer feedback, and the implications on the future of the language design. In the end, this thought process and continued community engagement led to renewed consensus in TC39 on the proposal in this repository. 
+
+### Implementations
+
+- Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
+- [In progress](https://github.com/bloomberg/TypeScript/pull/6) in TypeScript
+- [Behind a flag](https://www.chromestatus.com/feature/6001727933251584) in V8
+- [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in JSC
+- Planned in SpiderMonkey
+
+### Activity welcome in this repository
+
+You are encouraged to file issues and PRs this repository to
+- Ask questions about the proposal, how the syntax works, what the semantics mean, etc.
+- Propose and discuss small syntactic or semantic tweaks, especially those motivated by experience implementing or using the proposal.
+- Develop improved documentation, sample code, and other ways to introduce programmers at all levels to this feature.
+
+If you have any additional ideas on how to improve JavaScript, see ecma262's [CONTRIBUTING.md](https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md) for how to create a new feature proposal.
