@@ -145,6 +145,7 @@ In considering each proposal, TC39 delegates looked deeply into the motivation, 
 - [Behind a flag](https://www.chromestatus.com/feature/6001727933251584) in V8
 - [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in JSC
 - Planned in SpiderMonkey
+- [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
 ### Activity welcome in this repository
 
