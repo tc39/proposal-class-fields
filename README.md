@@ -136,15 +136,20 @@ This proposal reached [Stage 3](https://tc39.github.io/process-document/) in Jul
 - [Additional use of the `private` keyword](https://gist.github.com/rauschma/a4729faa65b30a6fda46a5799016458a)
 - [Private Symbols](https://github.com/zenparsing/proposal-private-symbols)
 
-In considering each proposal, TC39 delegates looked deeply into the motivation, JS developer feedback, and the implications on the future of the language design. In the end, this thought process and continued community engagement led to renewed consensus in TC39 on the proposal in this repository. 
+In considering each proposal, TC39 delegates looked deeply into the motivation, JS developer feedback, and the implications on the future of the language design. In the end, this thought process and continued community engagement led to renewed consensus on the proposal in this repository. Based on that consensus, implementations are moving forward on this proposal.
 
 ### Implementations
 
+You can experiment the class fields proposal using the following complete implementations:
+
 - Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
+- [Behind a flag](https://www.chromestatus.com/feature/6001727933251584) in Chrome/V8
+
+Further implementations are on the way:
+
 - [In progress](https://github.com/bloomberg/TypeScript/pull/6) in TypeScript
-- [Behind a flag](https://www.chromestatus.com/feature/6001727933251584) in V8
-- [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in JSC
-- Planned in SpiderMonkey
+- [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in Safari/JSC
+- Planned in Firefox/SpiderMonkey
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
 ### Activity welcome in this repository
@@ -154,4 +159,4 @@ You are encouraged to file issues and PRs this repository to
 - Propose and discuss small syntactic or semantic tweaks, especially those motivated by experience implementing or using the proposal.
 - Develop improved documentation, sample code, and other ways to introduce programmers at all levels to this feature.
 
-If you have any additional ideas on how to improve JavaScript, see ecma262's [CONTRIBUTING.md](https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md) for how to create a new feature proposal.
+If you have any additional ideas on how to improve JavaScript, see ecma262's [CONTRIBUTING.md](https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md) for how to get involved.
