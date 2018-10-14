@@ -2,6 +2,13 @@
 
 set -ev
 
+# Pull requests and commits to other branches shouldn't try to deploy, just build to verify
+if [[ "$TRAVIS_BRANCH" != master ]]; then
+  echo "Skipping deploy; just doing a build."
+  npm run build
+  exit 0
+fi
+
 # Enable SSH authentication
 
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
