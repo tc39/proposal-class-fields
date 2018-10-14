@@ -68,7 +68,7 @@ This also wouldn't allow accessing fields of objects other than `this`.
 
 ### Why not only allow accessing fields of `this`, e.g. by just having a bare `x` refer to the private field `x`?
 
-It is a goal of this proposal to allow accessing private fields of other instances of the same class (see below), which requires some syntax. Also, using bare identifiers to refer to properties is not the usual JS way (with the exception of `with`, which is generally considered to have been a mistake).
+It is a goal of this proposal to allow accessing private fields of other instances of the same class (see [below](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#why-does-this-proposal-allow-accessing-private-fields-of-other-instances-of-the-same-class-dont-other-languages-normally-forbid-that)), which requires some syntax. Also, using bare identifiers to refer to properties is not the usual JS way (with the exception of `with`, which is generally considered to have been a mistake).
 
 ## Why doesn't `this['#x']` access the private field named `#x`, given that `this.#x` does?
 
@@ -152,7 +152,7 @@ In the end, the only other options are longer sequences of punctuation, which se
 
 ## Why doesn't this proposal allow some mechanism for reflecting on / accessing private fields from outside the class which declares them (e.g. for testing)? Don't other languages normally allow that?
 
-Doing so would violate encapsulation (see below). That other languages allow it isn't sufficient reason on its own, especially since in some of them (e.g. C++) this is accomplished by modifying memory directly and is not necessarily a goal.
+Doing so would violate encapsulation (see [below](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#why-is-encapsulation-a-goal-of-this-proposal)). That other languages allow it isn't sufficient reason on its own, especially since in some of them (e.g. C++) this is accomplished by modifying memory directly and is not necessarily a goal.
 
 ## What do you mean by "encapsulation" / "hard private"?
 
@@ -166,9 +166,9 @@ This also means that if a class has a private field named `x`, code outside the 
 
 1. Library authors have found that their users will start to depend on any exposed part of their interface, even undocumented parts. They do not generally consider themselves free to break their user's pages and applications just because those users were depending upon some part of the library's interface which the library author did not intend them to depend upon. As a consequence, they would like to have hard private state to be able to hide implementation details in a more complete way.
 
-1. While it's already possible to *model* true encapsulation using either per-instance closures or WeakMaps (see below), both approaches are unergonomic to use with classes and have memory usage semantics which may be surprising. Furthermore, per-instance closures don't allow instances of the same class to access each other's private fields (see [above](#why-does-this-proposal-allow-accessing-private-fields-of-other-instances-of-the-same-class-dont-other-languages-normally-forbid-that)), and with WeakMaps there's a non-obvious risk of exposing private data. WeakMaps are also likely to be slower than private fields could be.
+1. While it's already possible to *model* true encapsulation using either per-instance closures or WeakMaps (see [below](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#how-can-you-model-encapsulation-using-weakmaps)), both approaches are unergonomic to use with classes and have memory usage semantics which may be surprising. Furthermore, per-instance closures don't allow instances of the same class to access each other's private fields (see [above](#why-does-this-proposal-allow-accessing-private-fields-of-other-instances-of-the-same-class-dont-other-languages-normally-forbid-that)), and with WeakMaps there's a non-obvious risk of exposing private data. WeakMaps are also likely to be slower than private fields could be.
 
-1. "Hidden" but not encapsulated properties are likewise already possible through the use of Symbols as property names (see below).
+1. "Hidden" but not encapsulated properties are likewise already possible through the use of Symbols as property names (see [below](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#how-can-you-provide-hidden-but-not-encapsulated-properties-using-symbols)).
 
 This proposal is currently moving forward with hard-private fields, letting [decorators](https://github.com/tc39/proposal-private-fields/blob/master/DECORATORS.md) or other mechanisms provide classes an opt-in escape hatch. We intend to gather feedback during this process to help determine whether this is the correct semantics.
 
