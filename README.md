@@ -60,7 +60,7 @@ class Counter extends HTMLElement {
 window.customElements.define('num-counter', Counter);
 ```
 
-In the above example, you can see a field declared with the syntax `x = 0`. You can also declare a field without an initializer as `x`. By declaring fields up-front, class definitions become more self-documenting; instances go through fewer state transitions, as declared fields are always present.
+In the above example, you can see a field declared with the syntax `x = 0;`. You can also declare a field without an initializer as `x;`. By declaring fields up-front, class definitions become more self-documenting; instances go through fewer state transitions, as declared fields are always present.
 
 ## Private fields
 
