@@ -143,7 +143,7 @@ In considering each proposal, TC39 delegates looked deeply into the motivation, 
 You can experiment with the class fields proposal using the following complete implementations:
 
 - Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
-- [Behind a flag](https://www.chromestatus.com/feature/6001727933251584) in Chrome/V8
+- Public fields are [enabled by default](https://www.chromestatus.com/feature/6001727933251584) in Chrome Canary / V8, private fields are behind a flag in Chrome / V8
 
 Further implementations are on the way:
 
