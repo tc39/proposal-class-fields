@@ -12,15 +12,13 @@ To define a counter widget which increments when clicked, you can define the fol
 
 ```js
 class Counter extends HTMLElement {
-  clicked() {
-    this.x++;
-    window.requestAnimationFrame(this.render.bind(this));
-  }
-
   constructor() {
     super();
-    this.onclick = this.clicked.bind(this);
     this.x = 0;
+    this.onclick = () => {
+      this.x++;
+      window.requestAnimationFrame(this.render.bind(this));
+    }
   }
 
   connectedCallback() { this.render(); }
@@ -41,15 +39,10 @@ With the ESnext field declarations proposal, the above example can be written as
 class Counter extends HTMLElement {
   x = 0;
 
-  clicked() {
+  onclick = () => {
     this.x++;
     window.requestAnimationFrame(this.render.bind(this));
-  }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
-  }
+  };
 
   connectedCallback() { this.render(); }
 
@@ -60,7 +53,7 @@ class Counter extends HTMLElement {
 window.customElements.define('num-counter', Counter);
 ```
 
-In the above example, you can see a field declared with the syntax `x = 0`. You can also declare a field without an initializer as `x`. By declaring fields up-front, class definitions become more self-documenting; instances go through fewer state transitions, as declared fields are always present.
+In the above example, you can see two class fields declared: `x = 0;` and `onclick = () => { /* ... * /};`. You can also declare a field without an initializer as `x`. By declaring fields up-front, class definitions become more self-documenting; instances go through fewer state transitions, as declared fields are always present.
 
 ## Private fields
 
@@ -70,15 +63,10 @@ The above example has some implementation details exposed to the world that migh
 class Counter extends HTMLElement {
   #x = 0;
 
-  clicked() {
+  onclick = () => {
     this.#x++;
     window.requestAnimationFrame(this.render.bind(this));
-  }
-
-  constructor() {
-    super();
-    this.onclick = this.clicked.bind(this);
-  }
+  };
 
   connectedCallback() { this.render(); }
 
