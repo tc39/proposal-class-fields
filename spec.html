@@ -85,8 +85,24 @@ emu-example pre {
 <emu-clause id=sec-syntax>
   <h1>Syntax</h1>
 
+  <emu-clause id=sec-lexical-grammar>
+    <h1>Lexical Grammar</h1>
+    <emu-grammar>
+      PrivateName ::
+        `#` IdentifierName
+
+      CommonToken ::
+        IdentifierName
+        Punctuator
+        NumericLiteral
+        StringLiteral
+        Template
+        <ins>PrivateName</ins>
+    </emu-grammar>
+  </emu-clause>
+
   <emu-clause id=sec-new-syntax>
-    <h1>New Productions</h1>
+    <h1>New Syntactic Grammar Productions</h1>
 
     <emu-grammar>
       FieldDefinition[Yield, Await] :
@@ -95,14 +111,11 @@ emu-example pre {
       ClassElementName[Yield, Await] :
         PropertyName[?Yield, ?Await]
         PrivateName
-
-      PrivateName ::
-        `#` IdentifierName
     </emu-grammar>
   </emu-clause>
 
   <emu-clause id=sec-updated-syntax>
-    <h1>Updated Productions</h1>
+    <h1>Updated Syntactic Grammar Productions</h1>
 
     <emu-grammar>
       ClassElement[Yield, Await] :
