@@ -606,7 +606,7 @@ emu-example pre {
       1. Perform MakeConstructor(_F_, *false*, _proto_).
       1. Perform MakeClassConstructor(_F_).
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
-      1. If |ClassBody_opt| is not present, let _elements_ be a new empty List.
+      1. If |ClassBody_opt| is not present, let <del>_methods_</del><ins>_elements_</ins> be a new empty List.
       1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructorMethodDefinitions of |ClassBody|.
       1. <ins>Let _fieldRecords_ be a new empty List.</ins>
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
