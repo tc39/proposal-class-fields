@@ -149,7 +149,7 @@ Further implementations are on the way:
 
 - [In progress](https://github.com/bloomberg/TypeScript/pull/6) in TypeScript
 - [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in Safari/JSC
-- Planned in Firefox/SpiderMonkey
+- [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox/SpiderMonkey
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
 ### Activity welcome in this repository
