@@ -4,8 +4,6 @@ Daniel Ehrenberg, Jeff Morrison
 
 Stage 3
 
-This document proposes a combined vision for [public fields](https://tc39.github.io/proposal-class-public-fields/) and [private fields](https://github.com/tc39/proposal-private-fields), drawing on the earlier [Orthogonal Classes](https://github.com/erights/Orthogonal-Classes) and [Class Evaluation Order](https://onedrive.live.com/view.aspx?resid=A7BBCE1FC8EE16DB!442046&app=PowerPoint&authkey=!AEeXmhZASk50KjA) proposals. It is written to be forward-compatible with the introduction of private methods and decorators, whose integration is explained in the [unified class features proposal](https://github.com/littledan/proposal-decorators). Methods and accessors are defined in [a follow-on proposal](https://github.com/littledan/proposal-private-methods/).
-
 ## A guiding example: Custom elements with classes
 
 To define a counter widget which increments when clicked, you can define the following with ES2015:
@@ -137,6 +135,25 @@ This proposal reached [Stage 3](https://tc39.github.io/process-document/) in Jul
 - [Private Symbols](https://github.com/zenparsing/proposal-private-symbols)
 
 In considering each proposal, TC39 delegates looked deeply into the motivation, JS developer feedback, and the implications on the future of the language design. In the end, this thought process and continued community engagement led to renewed consensus on the proposal in this repository. Based on that consensus, implementations are moving forward on this proposal.
+
+### Development history
+
+This document proposes a combined vision for [public fields](https://tc39.github.io/proposal-class-public-fields/) and [private fields](https://github.com/tc39/proposal-private-fields), drawing on the earlier [Orthogonal Classes](https://github.com/erights/Orthogonal-Classes) and [Class Evaluation Order](https://onedrive.live.com/view.aspx?resid=A7BBCE1FC8EE16DB!442046&app=PowerPoint&authkey=!AEeXmhZASk50KjA) proposals. It is written to be forward-compatible with the introduction of private methods and decorators, whose integration is explained in the [unified class features proposal](https://github.com/littledan/proposal-decorators). Methods and accessors are defined in [a follow-on proposal](https://github.com/littledan/proposal-private-methods/).
+
+This proposal has been developed in this GitHub repository as well as in presentations and discussions in [TC39 meetings](https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md). See the past presentations and discussion notes below.
+
+| Date           | Slides                                                                                                                                                        | Notes                                                                                                                                                         |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| July 2016      | [Private State](https://docs.google.com/presentation/d/1RM_DEWAYh8PmJRt02IunIRaUNjlwprXF3yPW6NltuMA/edit#slide=id.p)                                          | [📝](https://github.com/tc39/tc39-notes/blob/master/es7/2016-07/jul-28.md#9iiib-private-state)                                                                |
+| January 2017   | [Public and private class fields: Where we are and next steps](https://docs.google.com/presentation/d/1yXsRdAJO7OdxF0NmZs2N8ySSrQwKp3D77vZXbQOWbMs/edit)      | [📝](https://github.com/tc39/tc39-notes/blob/master/es7/2017-01/jan-26.md#public-and-private-class-fields-daniel-ehrenberg-jeff-morrison-and-kevin-gibbons)   |
+| May 2017       | [Class Fields Integrated Proposal](https://drive.google.com/file/d/0B-TAClBGyqSxWHpyYmg2UnRHc28/view)                                                         | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-05/may-25.md#15iiib-updates-on-class-field-proposals-both-public-and-private)                    |
+| July 2017      | [Unified Class Features: A vision of orthogonality](https://docs.google.com/presentation/d/1GZ5Rfa4T7aF7t0xJrDxRZhC49mvqG5Nm6qZ_g_qrfBY/edit#slide=id.p)      | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-07/jul-27.md#11ivc-class-fields-for-stage-3)                                                     |
+| September 2017 | [Class fields status update](https://docs.google.com/presentation/d/169hWHIKFnX8E-N90FJQS3u5xpo5Tt-s4IFdheLySVfQ/edit#slide=id.p)                             | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-09/sep-26.md#12ib-class-fields-status-update)                                                    |
+| November 2017  | [Class fields, static and private](https://docs.google.com/presentation/d/1wgus0BykoVk_qqCpr0TjgO0TV0Y4ql4d9iY212phzbY/edit#slide=id.g2936c02723_0_63)        | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-11/nov-30.md#10iva-continued-inheriting-private-static-class-elements-discussion-and-resolution) |
+| November 2017  | [Class features proposals: Instance features to stage 3](https://docs.google.com/presentation/d/1wKktzSOKnVIUAnfDHgTVOlQp-O3OBtHN4dKX8--DQvc/edit#slide=id.p) | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-11/nov-30.md#10iva-continued-inheriting-private-static-class-elements-discussion-and-resolution) |
+| November 2017  | [ASI in class field declarations](https://docs.google.com/presentation/d/1bPzE6i_Bpm6FXgzfx9XFJNHGkVcM42lux-6bUNhxpl4/edit#slide=id.p)                        | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-11/nov-30.md#10ivf-class-fields-asi-discussion-and-resolution)                                   |
+| May 2018       | [Class fields: Stage 3 status update](https://docs.google.com/presentation/d/1oDQOS9b8wnuP5-o8zInsEO9lpRbhduawAmvfRzbxkOs/edit?usp=sharing)                   | [📝](https://github.com/tc39/tc39-notes/blob/master/es9/2018-05/may-23.md#class-fields-status-update)                                                         |
+| September 2018 | [Class fields and private methods: Stage 3 update](https://docs.google.com/presentation/d/1Q9upYkWnPjJaVc8k9q3U6NekDch8tsz7CgV-Xm55-5Y/edit#slide=id.p)       | [📝](https://github.com/tc39/tc39-notes/blob/master/es9/2018-09/sept-26.md#class-fields-and-private-methods-stage-3-update)                                   |
 
 ### Implementations
 
