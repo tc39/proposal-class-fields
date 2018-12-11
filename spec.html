@@ -300,7 +300,7 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Perform ? PropertyDefinitionEvaluation with parameters _object_ and _enumerable_.
-    1. Return an empty List.
+    1. Return ~empty~.
   </emu-alg>
 </emu-clause>
 
@@ -324,8 +324,8 @@ emu-example pre {
     1. Else,
       1. Let _initializer_ be ~empty~.
       1. Let _isAnonymousFunctionDeclaration_ be *false*.
-    1. Return a List containing Record {
-         [[Name]]: _fieldName_,
+    1. Return a Record {
+         [[Name]]: _fieldName_, 
          [[Initializer]]: _initializer_,
          [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
        }.
@@ -395,9 +395,9 @@ emu-example pre {
   <emu-alg>
     1. Assert: Type ( _O_ ) is Object.
     1. Assert: Assert _constructor_ is an ECMAScript function object.
-    1. Let _fieldRecords_ be the value of _constructor_'s [[Fields]] internal slot.
-    1. For each item _fieldRecord_ in order from _fieldRecords_,
-      1. Perform ? DefineField(_O_, _fieldRecord_).
+    1. Let _fields_ be the value of _constructor_.[[Fields]].
+    1. For each item _fieldRecord_ in order from _fields_,
+      1. Perform ? DefineField(_O_, _fields_).
     1. Return.
   </emu-alg>
   <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
@@ -621,21 +621,21 @@ emu-example pre {
       1. Perform CreateMethodProperty(_proto_, `"constructor"`, _F_).
       1. If |ClassBody_opt| is not present, let <del>_methods_</del><ins>_elements_</ins> be a new empty List.
       1. Else, let <del>_methods_</del><ins>_elements_</ins> be NonConstructorMethodDefinitions of |ClassBody|.
-      1. <ins>Let _fieldRecords_ be a new empty List.</ins>
+      1. <ins>Let _instanceFields_ be a new empty List.</ins>
       1. For each |ClassElement| <del>_m_</del><ins>_e_</ins> in order from <del>_methods_</del><ins>_elements_</ins>
         1. If IsStatic of <del>_m_</del><ins>_e_</ins> is *false*, then
-          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
+          1. Let _field_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _proto_ and *false*.
         1. Else,
-          1. Let _fields_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
-        1. If _fields_ is an abrupt completion, then
+          1. Let _field_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
+        1. If _field_ is an abrupt completion, then
           1. Set the running execution context's LexicalEnvironment to _lex_.
           1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
-          1. Return Completion(_status_).
-        1. <ins>Append to _fieldRecords_ the elements of _fields_.</ins>
+          1. Return Completion(_field_).
+        1. <ins>If _field_ is not ~empty~, append _field_ to _instanceFields_.</ins>
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
-      1. <ins>Set the value of _F_'s [[Fields]] internal slot to _fieldRecords_.</ins>
+      1. <ins>Set _F_.[[Fields]] to _instanceFields_.</ins>
       1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
       1. Return _F_.
     </emu-alg>
@@ -1395,7 +1395,7 @@ emu-example pre {
         1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
       <emu-grammar>
         AsyncGeneratorMethod : `async` [no LineTerminator here] `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`
@@ -1412,7 +1412,7 @@ emu-example pre {
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform ! SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
       <emu-grammar>
         AsyncMethod : `async` [no LineTerminator here] PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
@@ -1427,7 +1427,7 @@ emu-example pre {
         1. Perform ! MakeMethod(_closure_, _object_).
         1. Perform ! SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
     </emu-clause>
 </emu-clause>
