@@ -100,6 +100,18 @@ emu-example pre {
         <ins>PrivateNameIdentifier</ins>
     </emu-grammar>
   </emu-clause>
+  <script>
+  // Provide a target for the old prod-PrivateName anchor
+  // REMOVE THIS BEFORE INTEGRATING INTO MAIN SPEC
+  (function() {
+      var pni = document.getElementById("prod-PrivateNameIdentifier");
+      if (pni) {
+          var span = document.createElement("span");
+          span.id = "prod-PrivateName";
+          pni.insertBefore(span, pni.firstChild);
+      }
+  })();
+  </script>
 
   <emu-clause id=sec-new-syntax>
     <h1>New Syntactic Grammar Productions</h1>
