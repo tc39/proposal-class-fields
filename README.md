@@ -120,7 +120,7 @@ Omitted from this proposal are private methods and accessors, private members of
 
 ## Changes vs previous proposals
 
-- Comma-separated multiple definitions: These are visible in the above example of `class C`, and are analogous to comma-separated definitions from `var`, `let` and `const`. They may be immediately useful when declaring multiple `static` fields, but later are useful in conjuction with decorators.
+- Comma-separated multiple definitions: These have been [removed from the proposal](https://github.com/tc39/proposal-class-fields/issues/20), each declaration must stand alone and be terminated with a semicolon (or ASI-friendly line break). Having multiple comma-separated definitions may be the subject of a later proposal.
 - Private static fields: These just fall out naturally "from the grid" when combining the proposals. It would've taken special spec text to specifically block them.
 
 
