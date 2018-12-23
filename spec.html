@@ -88,7 +88,7 @@ emu-example pre {
   <emu-clause id=sec-lexical-grammar>
     <h1>Lexical Grammar</h1>
     <emu-grammar>
-      <ins>PrivateNameIdentifier ::
+      <ins>PrivateIdentifier ::
         `#` IdentifierName</ins>
 
       CommonToken ::
@@ -97,7 +97,7 @@ emu-example pre {
         NumericLiteral
         StringLiteral
         Template
-        <ins>PrivateNameIdentifier</ins>
+        <ins>PrivateIdentifier</ins>
     </emu-grammar>
   </emu-clause>
 
@@ -110,7 +110,7 @@ emu-example pre {
 
       ClassElementName[Yield, Await] :
         PropertyName[?Yield, ?Await]
-        PrivateNameIdentifier
+        PrivateIdentifier
     </emu-grammar>
   </emu-clause>
 
@@ -132,7 +132,7 @@ emu-example pre {
         SuperProperty[?Yield, ?Await]
         MetaProperty
         `new` MemberExpression[?Yield, ?Await] Arguments[?Yield, ?Await]
-        <ins>MemberExpression[?Yield, ?Await] `.` PrivateNameIdentifier</ins>
+        <ins>MemberExpression[?Yield, ?Await] `.` PrivateIdentifier</ins>
 
       CallExpression[Yield, Await] :
         CoverCallExpressionAndAsyncArrowHead[?Yield, ?Await] #callcover
@@ -141,7 +141,7 @@ emu-example pre {
         CallExpression[?Yield, ?Await] `[` Expression[+In, ?Yield, ?Await] `]`
         CallExpression[?Yield, ?Await] `.` IdentifierName
         CallExpression[?Yield, ?Await] TemplateLiteral[?Yield, ?Await]
-        <ins>CallExpression[?Yield, ?Await] `.` PrivateNameIdentifier</ins>
+        <ins>CallExpression[?Yield, ?Await] `.` PrivateIdentifier</ins>
     </emu-grammar>
   </emu-clause>
 
@@ -170,10 +170,10 @@ emu-example pre {
       </li>
     </ul>
 
-    <emu-grammar>ClassElementName : PrivateNameIdentifier `;`</emu-grammar>
+    <emu-grammar>ClassElementName : PrivateIdentifier `;`</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if StringValue of |PrivateNameIdentifier| is `"#constructor"`.
+        It is a Syntax Error if StringValue of |PrivateIdentifier| is `"#constructor"`.
       </li>
     </ul>
 
@@ -183,7 +183,7 @@ emu-example pre {
     <emu-grammar>UnaryExpression : `delete` UnaryExpression</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateNameIdentifier</emu-grammar>, or <emu-grammar>CallExpression : CallExpression `.` PrivateNameIdentifier</emu-grammar></ins>.
+        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>, or <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar></ins>.
       </li>
       <li>
         <p>It is a Syntax Error if the derived |UnaryExpression| is
@@ -196,36 +196,36 @@ emu-example pre {
     <emu-note>
       <p>The last rule means that expressions such as `delete (((foo)))` produce early errors because of recursive application of the first rule.</p>
     </emu-note>
-    <emu-note type=editor>Private fields may not be deleted in any case. There are only ever |PrivateNameIdentifier|s defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no |PrivateNameIdentifier|s defined, so the below rule will apply.</emu-note>
+    <emu-note type=editor>Private fields may not be deleted in any case. There are only ever |PrivateIdentifier|s defined inside class bodies. Inside of a class body, code will be in strict mode, and the above rule applies. Outside of a class body, there will be no |PrivateIdentifier|s defined, so the below rule will apply.</emu-note>
 
     <emu-grammar>ScriptBody : StatementList</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if AllPrivateNameIdentifiersValid of |StatementList| with an empty List as an argument is *false* unless the source code is eval code that is being processed by a direct eval.</li>
+      <li>It is a Syntax Error if AllPrivateIdentifiersValid of |StatementList| with an empty List as an argument is *false* unless the source code is eval code that is being processed by a direct eval.</li>
     </ul>
     <emu-grammar>ModuleBody : ModuleItemList</emu-grammar>
     <ul>
-      <li>It is a Syntax Error if AllPrivateNameIdentifiersValid of |ModuleItemList| with an empty List as an argument is *false*.</li>
+      <li>It is a Syntax Error if AllPrivateIdentifiersValid of |ModuleItemList| with an empty List as an argument is *false*.</li>
     </ul>
-    <emu-note type=editor>References to |PrivateNameIdentifier|s which are not lexically present cause an early error.</emu-note>
-  <emu-clause id="sec-all-private-name-identifiers-valid" aoid="AllPrivateNameIdentifiersValid" oldids="sec-all-private-names-valid">
-    <h1>Static Semantics: AllPrivateNameIdentifiersValid</h1>
-    AllPrivateNameIdentifiersValid is an abstract operation which takes _names_ as an argument.
-    <emu-grammar>MemberExpression[Yield, Await] : MemberExpression[?Yield, ?Await] `.` PrivateNameIdentifier</emu-grammar>
+    <emu-note type=editor>References to |PrivateIdentifier|s which are not lexically present cause an early error.</emu-note>
+  <emu-clause id="sec-all-private-identifiers-valid" aoid="AllPrivateIdentifiersValid" oldids="sec-all-private-names-valid">
+    <h1>Static Semantics: AllPrivateIdentifiersValid</h1>
+    AllPrivateIdentifiersValid is an abstract operation which takes _names_ as an argument.
+    <emu-grammar>MemberExpression[Yield, Await] : MemberExpression[?Yield, ?Await] `.` PrivateIdentifier</emu-grammar>
     <emu-alg>
-      1. If StringValue of |PrivateNameIdentifier| is in _names_, return *true*.
+      1. If StringValue of |PrivateIdentifier| is in _names_, return *true*.
       1. Return *false*.
     </emu-alg>
 
-    <emu-grammar>CallExpression[Yield, Await] : CallExpression[?Yield, ?Await] `.` PrivateNameIdentifier</emu-grammar>
+    <emu-grammar>CallExpression[Yield, Await] : CallExpression[?Yield, ?Await] `.` PrivateIdentifier</emu-grammar>
     <emu-alg>
-      1. If StringValue of |PrivateNameIdentifier| is in _names_, return *true*.
+      1. If StringValue of |PrivateIdentifier| is in _names_, return *true*.
       1. Return *false*.
     </emu-alg>
 
     <emu-grammar> ClassBody[Yield, Await] : ClassElementList[?Yield, ?Await] </emu-grammar>
     <emu-alg>
       1. Let _newNames_ be the concatenation of _names_ with PrivateBoundNames of |ClassBody|.
-      1. Return AllPrivateNameIdentifiersValid of |ClassElementList| with the argument _newNames_.
+      1. Return AllPrivateIdentifiersValid of |ClassElementList| with the argument _newNames_.
     </emu-alg>
 
     For all other grammatical productions, recurse on subexpressions/substatements, passing in the _names_ of the caller. If all pieces return *true*, then return *true*. If any returns *false*, return *false*.
@@ -255,7 +255,7 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-      ClassElementName[Yield, Await] : PrivateNameIdentifier
+      ClassElementName[Yield, Await] : PrivateIdentifier
   </emu-grammar>
   <emu-alg>
     1. Return ~empty~.
@@ -272,10 +272,10 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-      ClassElementName[Yield, Await] : PrivateNameIdentifier
+      ClassElementName[Yield, Await] : PrivateIdentifier
   </emu-grammar>
   <emu-alg>
-    1. Let _bindingName_ be StringValue of |PrivateNameIdentifier|.
+    1. Let _bindingName_ be StringValue of |PrivateIdentifier|.
     1. Let _field_ be NewPrivateName(_bindingName_).
     1. Let _scope_ be the running execution context's PrivateNameEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
@@ -407,11 +407,11 @@ emu-example pre {
   <h1>Static Semantics: StringValue</h1>
   <emu-see-also-para op="StringValue"></emu-see-also-para>
   <emu-grammar>
-    PrivateNameIdentifier ::
+    PrivateIdentifier ::
       `#` IdentifierName
   </emu-grammar>
   <emu-alg>
-    1. Return the String value consisting of the sequence of code units corresponding to |PrivateNameIdentifier|. In determining the sequence any occurrences of `\\` |UnicodeEscapeSequence| are first replaced with the code point represented by the |UnicodeEscapeSequence| and then the code points of the entire |PrivateNameIdentifier| are converted to code units by UTF16Encoding (<emu-xref href="#sec-utf16encoding"></emu-xref>) each code point.
+    1. Return the String value consisting of the sequence of code units corresponding to |PrivateIdentifier|. In determining the sequence any occurrences of `\\` |UnicodeEscapeSequence| are first replaced with the code point represented by the |UnicodeEscapeSequence| and then the code points of the entire |PrivateIdentifier| are converted to code units by UTF16Encoding (<emu-xref href="#sec-utf16encoding"></emu-xref>) each code point.
   </emu-alg>
 </emu-clause>
 
@@ -425,10 +425,10 @@ emu-example pre {
   </emu-alg>
 
   <emu-grammar>
-    ClassElementName : PrivateNameIdentifier
+    ClassElementName : PrivateIdentifier
   </emu-grammar>
   <emu-alg>
-    1. Return a new List containing the StringValue of |PrivateNameIdentifier|.
+    1. Return a new List containing the StringValue of |PrivateIdentifier|.
   </emu-alg>
 
   <emu-grammar>
@@ -789,8 +789,8 @@ emu-example pre {
             1. If _strict_ is *true*, then
               1. If BoundNames of _parameters_ contains any duplicate elements, throw a *SyntaxError* exception.
             1. <ins>Let _privateNameIdentifiers_ be an empty List.</ins>
-            1. <ins>If AllPrivateNameIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
-            1. <ins>If AllPrivateNameIdentifiersValid of _parameters_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>If AllPrivateIdentifiersValid of _parameters_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
             1. Let _proto_ be ? GetPrototypeFromConstructor(_newTarget_, _fallbackProto_).
             1. Let _F_ be FunctionAllocate(_proto_, _strict_, _kind_).
             1. Let _realmF_ be _F_.[[Realm]].
@@ -904,7 +904,7 @@ emu-example pre {
             1. <ins>For each binding named _N_ in _privateEnv_,</ins>
               1. <ins>If _privateNameIdentifiers_ does not contain _N_, append _N_ to _privateNameIdentifiers_.</ins>
             1. <ins>Let _privateEnv_ be _privateEnv_'s outer environment reference.</ins>
-          1. <ins>If AllPrivateNameIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+          1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
           1. Let _functionsToInitialize_ be a new empty List.
           1. Let _declaredFunctionNames_ be a new empty List.
           1. For each _d_ in _varDeclarations_, in reverse list order do
@@ -1514,21 +1514,21 @@ emu-example pre {
 
 <emu-clause id="sec-private-references-runtime-semantics-evaluation">
   <h1>Runtime Semantics: Evaluation</h1>
-  <emu-grammar>MemberExpression : MemberExpression `.` PrivateNameIdentifier</emu-grammar>
+  <emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>
   <emu-alg>
     1. Let _baseReference_ be the result of evaluating |MemberExpression|.
     1. Let _baseValue_ be ? GetValue(_baseReference_).
     1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
-    1. Let _fieldNameString_ be the StringValue of |PrivateNameIdentifier|.
+    1. Let _fieldNameString_ be the StringValue of |PrivateIdentifier|.
     1. Return MakePrivateReference(_bv_, _fieldNameString_).
   </emu-alg>
 
-  <emu-grammar>CallExpression : CallExpression `.` PrivateNameIdentifier</emu-grammar>
+  <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar>
   <emu-alg>
     1. Let _baseReference_ be the result of evaluating |CallExpression|.
     1. Let _baseValue_ be ? GetValue(_baseReference_).
     1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
-    1. Let _fieldNameString_ be the StringValue of |PrivateNameIdentifier|.
+    1. Let _fieldNameString_ be the StringValue of |PrivateIdentifier|.
     1. Return MakePrivateReference(_bv_, _fieldNameString_).
   </emu-alg>
 </emu-clause>
@@ -1649,9 +1649,9 @@ emu-example pre {
   </emu-clause>
 </emu-clause>
 
-  <emu-clause id="sec-lexically-scoped-private-names">
-    <h1>Lexically scoped Private Names</h1>
-    <p>Private name identifiers follow typical lexical scoping logic. This section contains amended algorithms for managing the scope of private name identifiers.</p>
+  <emu-clause id="sec-lexically-scoped-private-identifiers" oldids="sec-lexically-scoped-private-names">
+    <h1>Lexically Scoped Private Identifiers</h1>
+    <p>Private identifiers follow typical lexical scoping logic. This section contains amended algorithms for managing the scope of private identifiers.</p>
 
 <emu-clause id="sec-execution-contexts">
   <h1>Execution Contexts</h1>
