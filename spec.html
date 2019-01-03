@@ -160,7 +160,7 @@ emu-example pre {
       ClassBody : ClassElementList
     </emu-grammar>
     <ul>
-      <li>It is a Syntax Error if PrivateBoundNames of |ClassBody| contains any duplicate entries.</li>
+      <li>It is a Syntax Error if PrivateBoundIdentifiers of |ClassBody| contains any duplicate entries.</li>
     </ul>
 
     <emu-grammar>ClassElement : FieldDefinition `;`</emu-grammar>
@@ -224,7 +224,7 @@ emu-example pre {
 
     <emu-grammar> ClassBody[Yield, Await] : ClassElementList[?Yield, ?Await] </emu-grammar>
     <emu-alg>
-      1. Let _newNames_ be the concatenation of _names_ with PrivateBoundNames of |ClassBody|.
+      1. Let _newNames_ be the concatenation of _names_ with PrivateBoundIdentifiers of |ClassBody|.
       1. Return AllPrivateIdentifiersValid of |ClassElementList| with the argument _newNames_.
     </emu-alg>
 
@@ -276,13 +276,13 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateIdentifier|.
-    1. Let _field_ be NewPrivateName(_bindingName_).
-    1. Let _scope_ be the running execution context's PrivateNameEnvironment.
+    1. Let _field_ be NewPrivateRecord(_bindingName_).
+    1. Let _scope_ be the running execution context's PrivateEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
     1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
     1. Return _field_.
   </emu-alg>
-  <emu-note type=editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
+  <emu-note type=editor>Each time a class declaration executes, distinct internal Private Records are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
 </emu-clause>
 
@@ -351,16 +351,16 @@ emu-example pre {
     <!-- es6num="9.2.11" -->
     <emu-clause id="sec-setfunctionname" aoid="SetFunctionName">
       <h1>SetFunctionName ( _F_, _name_ [ , _prefix_ ] )</h1>
-      <p>The abstract operation SetFunctionName requires a Function argument _F_, a String, Symbol, <ins>or Private Name</ins> argument _name_ and optionally a String argument _prefix_. This operation adds a `name` property to _F_ by performing the following steps:</p>
+      <p>The abstract operation SetFunctionName requires a Function argument _F_, a String, Symbol, <ins>or Private Record</ins> argument _name_ and optionally a String argument _prefix_. This operation adds a `name` property to _F_ by performing the following steps:</p>
       <emu-alg>
         1. Assert: _F_ is an extensible object that does not have a `name` own property.
-        1. Assert: Type(_name_) is either Symbol, String, <ins>or Private Name</ins>.
+        1. Assert: Type(_name_) is either Symbol, String, <ins>or Private Record</ins>.
         1. Assert: If _prefix_ was passed, then Type(_prefix_) is String.
         1. If Type(_name_) is Symbol, then
           1. Let _description_ be _name_'s [[Description]] value.
           1. If _description_ is *undefined*, set _name_ to the empty String.
           1. Else, set _name_ to the concatenation of `"["`, _description_, and `"]"`.
-        1. <ins>Else if _name_ is a Private Name,</ins>
+        1. <ins>Else if _name_ is a Private Record,</ins>
           1. <ins>Set _name_ to _name_'s [[Description]] value.</ins>
         1. If _prefix_ was passed, then
           1. Set _name_ to the concatenation of _prefix_, code unit 0x0020 (SPACE), and _name_.
@@ -381,7 +381,7 @@ emu-example pre {
     1. If _fieldRecord_.[[IsAnonymousFunctionDefinition]] is *true*, then
       1. Let _hasNameProperty_ be ? HasOwnProperty(_initValue_, `"name"`).
       1. If _hasNameProperty_ is *false*, perform SetFunctionName(_initValue_, _fieldName_).
-    1. If _fieldName_ is a Private Name,
+    1. If _fieldName_ is a Private Record,
       1. Perform ? PrivateFieldAdd(_fieldName_, _receiver_, _initValue_).
     1. Else,
       1. Assert: IsPropertyKey(_fieldName_) is *true*.
@@ -400,7 +400,7 @@ emu-example pre {
       1. Perform ? DefineField(_O_, _fields_).
     1. Return.
   </emu-alg>
-  <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previously private field.</emu-note>
+  <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previous private field.</emu-note>
 </emu-clause>
 
 <emu-clause id="sec-private-names-static-semantics-stringvalue">
@@ -415,13 +415,13 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="sec-private-bound-names" aoid="PrivateBoundNames">
-  <h1>Static Semantics: PrivateBoundNames</h1>
+<emu-clause id="sec-private-bound-identifiers" aoid="PrivateBoundIdentifiers" oldids="sec-private-bound-names">
+  <h1>Static Semantics: PrivateBoundIdentifiers</h1>
   <emu-grammar>
       FieldDefinition : ClassElementName Initializer?
   </emu-grammar>
   <emu-alg>
-    1. Return PrivateBoundNames of |ClassElementName|
+    1. Return PrivateBoundIdentifiers of |ClassElementName|
   </emu-alg>
 
   <emu-grammar>
@@ -453,15 +453,15 @@ emu-example pre {
     ClassElementList : ClassElement
   </emu-grammar>
   <emu-alg>
-    1. Return PrivateBoundNames of |ClassElement|.
+    1. Return PrivateBoundIdentifiers of |ClassElement|.
   </emu-alg>
 
   <emu-grammar>
     ClassElementList : ClassElementList ClassElement
   </emu-grammar>
   <emu-alg>
-    1. Let _names_ be PrivateBoundNames of |ClassElementList|.
-    1. Append to _names_ the elements of PrivateBoundNames of |ClassElement|.
+    1. Let _names_ be PrivateBoundIdentifiers of |ClassElementList|.
+    1. Append to _names_ the elements of PrivateBoundIdentifiers of |ClassElement|.
     1. Return _names_.
   </emu-alg>
 
@@ -469,7 +469,7 @@ emu-example pre {
     ClassBody : ClassElementList
   </emu-grammar>
   <emu-alg>
-    1. Return PrivateBoundNames of |ClassElementList|.
+    1. Return PrivateBoundIdentifiers of |ClassElementList|.
   </emu-alg>
 </emu-clause>
 
@@ -575,18 +575,18 @@ emu-example pre {
       1. Let _classScopeEnvRec_ be _classScope_'s EnvironmentRecord.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.CreateImmutableBinding(_className_, *true*).
-      1. <ins>Let _outerPrivateEnvironment_ be the PrivateNameEnvironment of the running execution context.</ins>
+      1. <ins>Let _outerPrivateEnvironment_ be the PrivateEnvironment of the running execution context.</ins>
       1. <ins>Let _classPrivateEnvironment_ be NewDeclarativeEnvironment(_outerPrivateEnvironment_).</ins>
       1. <ins>Let _classPrivateEnvRec_ be _classPrivateEnvironment_'s EnvironmentRecord.</ins>
       1. <ins>If |ClassBody_opt| is present, then</ins>
-        1. <ins>For each element _dn_ of the PrivateBoundNames of |ClassBody_opt|,</ins>
+        1. <ins>For each element _dn_ of the PrivateBoundIdentifiers of |ClassBody_opt|,</ins>
           1. <ins>Perform _classPrivateEnvRec_.CreateImmutableBinding(_dn_, *true*).</ins>
       1. If |ClassHeritage_opt| is not present, then
         1. Let _protoParent_ be the intrinsic object %ObjectPrototype%.
         1. Let _constructorParent_ be the intrinsic object %FunctionPrototype%.
       1. Else,
         1. Set the running execution context's LexicalEnvironment to _classScope_.
-        1. <ins>NOTE: The running execution context's PrivateNameEnvironment is _outerPrivateEnvironment_ when evaluating |ClassHeritage|.</ins>
+        1. <ins>NOTE: The running execution context's PrivateEnvironment is _outerPrivateEnvironment_ when evaluating |ClassHeritage|.</ins>
         1. Let _superclass_ be the result of evaluating |ClassHeritage|.
         1. Set the running execution context's LexicalEnvironment to _lex_.
         1. ReturnIfAbrupt(_superclass_).
@@ -611,7 +611,7 @@ emu-example pre {
             <pre><code class="javascript">constructor( ){ }</code></pre>
             using the syntactic grammar with the goal symbol |MethodDefinition[~Yield]|.
       1. Set the running execution context's LexicalEnvironment to _classScope_.
-      1. <ins>Set the running execution context's PrivateNameEnvironment to _classPrivateEnvironment_.</ins>
+      1. <ins>Set the running execution context's PrivateEnvironment to _classPrivateEnvironment_.</ins>
       1. Let _constructorInfo_ be the result of performing DefineMethod for _constructor_ with arguments _proto_ and _constructorParent_ as the optional _functionPrototype_ argument.
       1. Assert: _constructorInfo_ is not an abrupt completion.
       1. Let _F_ be _constructorInfo_.[[Closure]].
@@ -629,14 +629,14 @@ emu-example pre {
           1. Let _field_ be the result of performing <del>PropertyDefinitionEvaluation for _m_</del><ins>ClassElementEvaluation for _e_</ins> with arguments _F_ and *false*.
         1. If _field_ is an abrupt completion, then
           1. Set the running execution context's LexicalEnvironment to _lex_.
-          1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
+          1. <ins>Set the running execution context's PrivateEnvironment to _outerPrivateEnvironment_.</ins>
           1. Return Completion(_field_).
         1. <ins>If _field_ is not ~empty~, append _field_ to _instanceFields_.</ins>
       1. Set the running execution context's LexicalEnvironment to _lex_.
       1. If _className_ is not *undefined*, then
         1. Perform _classScopeEnvRec_.InitializeBinding(_className_, _F_).
       1. <ins>Set _F_.[[Fields]] to _instanceFields_.</ins>
-      1. <ins>Set the running execution context's PrivateNameEnvironment to _outerPrivateEnvironment_.</ins>
+      1. <ins>Set the running execution context's PrivateEnvironment to _outerPrivateEnvironment_.</ins>
       1. Return _F_.
     </emu-alg>
   </emu-clause>
@@ -788,15 +788,15 @@ emu-example pre {
               1. If _parameters_ Contains |AwaitExpression| is *true*, throw a *SyntaxError* exception.
             1. If _strict_ is *true*, then
               1. If BoundNames of _parameters_ contains any duplicate elements, throw a *SyntaxError* exception.
-            1. <ins>Let _privateNameIdentifiers_ be an empty List.</ins>
-            1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
-            1. <ins>If AllPrivateIdentifiersValid of _parameters_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>Let _privateIdentifiers_ be an empty List.</ins>
+            1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+            1. <ins>If AllPrivateIdentifiersValid of _parameters_ with the argument _privateIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
             1. Let _proto_ be ? GetPrototypeFromConstructor(_newTarget_, _fallbackProto_).
             1. Let _F_ be FunctionAllocate(_proto_, _strict_, _kind_).
             1. Let _realmF_ be _F_.[[Realm]].
             1. Let _scope_ be _realmF_.[[GlobalEnv]].
-            1. <ins>Let _privateNameScope_ be a new Lexical Environment.</ins>
-            1. Perform FunctionInitialize(_F_, ~Normal~, _parameters_, _body_, _scope_<ins>, _privateNameScope_</ins>).
+            1. <ins>Let _privateScope_ be a new Lexical Environment.</ins>
+            1. Perform FunctionInitialize(_F_, ~Normal~, _parameters_, _body_, _scope_<ins>, _privateScope_</ins>).
             1. If _kind_ is `"generator"`, then
               1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
               1. Perform DefinePropertyOrThrow(_F_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
@@ -839,11 +839,11 @@ emu-example pre {
           1. If _direct_ is *true*, then
             1. Let _lexEnv_ be NewDeclarativeEnvironment(_ctx_'s LexicalEnvironment).
             1. Let _varEnv_ be _ctx_'s VariableEnvironment.
-            1. <ins>Let _privateNameEnv_ be _ctx_'s PrivateNameEnvironment.</ins>
+            1. <ins>Let _privateEnv_ be _ctx_'s PrivateEnvironment.</ins>
           1. Else,
             1. Let _lexEnv_ be NewDeclarativeEnvironment(_evalRealm_.[[GlobalEnv]]).
             1. Let _varEnv_ be _evalRealm_.[[GlobalEnv]].
-            1. <ins>Let _privateNameEnv_ be a new Lexical Environment.</ins>
+            1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
           1. If _strictEval_ is *true*, set _varEnv_ to _lexEnv_.
           1. If _ctx_ is not already suspended, suspend _ctx_.
           1. Let _evalCxt_ be a new ECMAScript code execution context.
@@ -852,9 +852,9 @@ emu-example pre {
           1. Set the _evalCxt_'s ScriptOrModule to _ctx_'s ScriptOrModule.
           1. Set the _evalCxt_'s VariableEnvironment to _varEnv_.
           1. Set the _evalCxt_'s LexicalEnvironment to _lexEnv_.
-          1. <ins>Set the _evalCxt_'s PrivateNameEnvironment to _privateNameEnv_.</ins>
+          1. <ins>Set the _evalCxt_'s PrivateEnvironment to _privateEnv_.</ins>
           1. Push _evalCxt_ on to the execution context stack; _evalCxt_ is now the running execution context.
-          1. Let _result_ be EvalDeclarationInstantiation(_body_, _varEnv_, _lexEnv_, <ins>_privateNameEnv_</ins>_strictEval_).
+          1. Let _result_ be EvalDeclarationInstantiation(_body_, _varEnv_, _lexEnv_, <ins>_privateEnv_</ins>, _strictEval_).
           1. If _result_.[[Type]] is ~normal~, then
             1. Set _result_ to the result of evaluating _body_.
           1. If _result_.[[Type]] is ~normal~ and _result_.[[Value]] is ~empty~, then
@@ -874,8 +874,8 @@ emu-example pre {
     </ul>
   </emu-clause>
       <emu-clause id="sec-evaldeclarationinstantiation" aoid="EvalDeclarationInstantiation">
-        <h1>Runtime Semantics: EvalDeclarationInstantiation( _body_, _varEnv_, _lexEnv_, <ins>_privateNameEnv_,</ins>_strict_ )</h1>
-        <p>When the abstract operation EvalDeclarationInstantiation is called with arguments _body_, _varEnv_, _lexEnv_, _privateNameEnv_, and _strict_, the following steps are taken:</p>
+        <h1>Runtime Semantics: EvalDeclarationInstantiation( _body_, _varEnv_, _lexEnv_, <ins>_privateEnv_,</ins> _strict_ )</h1>
+        <p>When the abstract operation EvalDeclarationInstantiation is called with arguments _body_, _varEnv_, _lexEnv_, _privateEnv_, and _strict_, the following steps are taken:</p>
         <emu-alg>
           1. Let _varNames_ be the VarDeclaredNames of _body_.
           1. Let _varDeclarations_ be the VarScopedDeclarations of _body_.
@@ -898,13 +898,13 @@ emu-example pre {
                     1. NOTE: Annex <emu-xref href="#sec-variablestatements-in-catch-blocks"></emu-xref> defines alternate semantics for the above step.
                   1. NOTE: A direct eval will not hoist var declaration over a like-named lexical declaration.
               1. Let _thisLex_ be _thisLex_'s outer environment reference.
-          1. <ins>Let _privateNameIdentifiers_ be an empty List.</ins>
-          1. <ins>Let _privateEnv_ be _privateNameEnv_.</ins>
+          1. <ins>Let _privateIdentifiers_ be an empty List.</ins>
+          1. <ins>Let _privateEnv_ be _privateEnv_.</ins>
           1. <ins>Repeat while _privateEnv_ is not *null*,</ins>
             1. <ins>For each binding named _N_ in _privateEnv_,</ins>
-              1. <ins>If _privateNameIdentifiers_ does not contain _N_, append _N_ to _privateNameIdentifiers_.</ins>
+              1. <ins>If _privateIdentifiers_ does not contain _N_, append _N_ to _privateIdentifiers_.</ins>
             1. <ins>Let _privateEnv_ be _privateEnv_'s outer environment reference.</ins>
-          1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateNameIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
+          1. <ins>If AllPrivateIdentifiersValid of _body_ with the argument _privateIdentifiers_ is *false*, throw a *SyntaxError* exception.</ins>
           1. Let _functionsToInitialize_ be a new empty List.
           1. Let _declaredFunctionNames_ be a new empty List.
           1. For each _d_ in _varDeclarations_, in reverse list order do
@@ -940,7 +940,7 @@ emu-example pre {
                 1. Perform ? _lexEnvRec_.CreateMutableBinding(_dn_, *false*).
           1. For each Parse Node _f_ in _functionsToInitialize_, do
             1. Let _fn_ be the sole element of the BoundNames of _f_.
-            1. Let _fo_ be the result of performing InstantiateFunctionObject for _f_ with argument<ins>s</ins> _lexEnv_ <ins>and _privateNameEnv_</ins>.
+            1. Let _fo_ be the result of performing InstantiateFunctionObject for _f_ with argument<ins>s</ins> _lexEnv_ <ins>and _privateEnv_</ins>.
             1. If _varEnvRec_ is a global Environment Record, then
               1. Perform ? _varEnvRec_.CreateGlobalFunctionBinding(_fn_, _fo_, *true*).
             1. Else,
@@ -1004,7 +1004,7 @@ emu-example pre {
                     1. Call _envRec_.InitializeBinding(_dn_, *undefined*).
                     1. Append _dn_ to _declaredVarNames_.
               1. Let _lexDeclarations_ be the LexicallyScopedDeclarations of _code_.
-              1. <ins>Let _privateNameEnv_ be a new Lexical Environment.</ins>
+              1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
               1. For each element _d_ in _lexDeclarations_, do
                 1. For each element _dn_ of the BoundNames of _d_, do
                   1. If IsConstantDeclaration of _d_ is *true*, then
@@ -1012,7 +1012,7 @@ emu-example pre {
                   1. Else,
                     1. Perform ! _envRec_.CreateMutableBinding(_dn_, *false*).
                   1
-                    1. Let _fo_ be the result of performing InstantiateFunctionObject for _d_ with argument<ins>s</ins> _env_ <ins>and _privateNameEnv_</ins>.
+                    1. Let _fo_ be the result of performing InstantiateFunctionObject for _d_ with argument<ins>s</ins> _env_ <ins>and _privateEnv_</ins>.
                     1. Call _envRec_.InitializeBinding(_dn_, _fo_).
             </emu-alg>
           </emu-clause>
@@ -1128,10 +1128,10 @@ emu-example pre {
               1. Perform ! _lexEnvRec_.CreateImmutableBinding(_dn_, *true*).
             1. Else,
               1. Perform ! _lexEnvRec_.CreateMutableBinding(_dn_, *false*).
-        1. <ins>Let _privateNameEnv_ be the PrivateNameEnvironment of _calleeContext_.</ins>
+        1. <ins>Let _privateEnv_ be the PrivateEnvironment of _calleeContext_.</ins>
         1. For each Parse Node _f_ in _functionsToInitialize_, do
           1. Let _fn_ be the sole element of the BoundNames of _f_.
-          1. Let _fo_ be the result of performing InstantiateFunctionObject for _f_ with argument<ins>s</ins> _lexEnv_ <ins>and _privateNameEnv_</ins>.
+          1. Let _fo_ be the result of performing InstantiateFunctionObject for _f_ with argument<ins>s</ins> _lexEnv_ <ins>and _privateEnv_</ins>.
           1. Perform ! _varEnvRec_.SetMutableBinding(_fn_, _fo_, *false*).
         1. Return NormalCompletion(~empty~).
       </emu-alg>
@@ -1159,7 +1159,7 @@ emu-example pre {
         1. Let _envRec_ be _env_'s EnvironmentRecord.
         1. Assert: _envRec_ is a declarative Environment Record.
         1. Let _declarations_ be the LexicallyScopedDeclarations of _code_.
-        1. <ins>Let _privateNameEnv_ be the running execution context's PrivateNameEnvironment.</ins>
+        1. <ins>Let _privateEnv_ be the running execution context's PrivateEnvironment.</ins>
         1. For each element _d_ in _declarations_, do
           1. For each element _dn_ of the BoundNames of _d_, do
             1. If IsConstantDeclaration of _d_ is *true*, then
@@ -1168,7 +1168,7 @@ emu-example pre {
               1. Perform ! _envRec_.CreateMutableBinding(_dn_, *false*).
           1. If _d_ is a |FunctionDeclaration|, a |GeneratorDeclaration|, an |AsyncFunctionDeclaration|, or an |AsyncGeneratorDeclaration|, then
             1. Let _fn_ be the sole element of the BoundNames of _d_.
-            1. Let _fo_ be the result of performing InstantiateFunctionObject for _d_ with argument<ins>s</ins> _env_ <ins>and _privateNameEnv_</ins>.
+            1. Let _fo_ be the result of performing InstantiateFunctionObject for _d_ with argument<ins>s</ins> _env_ <ins>and _privateEnv_</ins>.
             1. Perform _envRec_.InitializeBinding(_fn_, _fo_).
       </emu-alg>
     </emu-clause>
@@ -1180,17 +1180,17 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |ArrowFunction| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _parameters_ be CoveredFormalsList of |ArrowParameters|.
-        1. Let _closure_ be FunctionCreate(~Arrow~, _parameters_, |ConciseBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be FunctionCreate(~Arrow~, _parameters_, |ConciseBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Return _closure_.
       </emu-alg>
       <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
       <emu-alg>
         1. If the function code for this |GeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Return _closure_.
@@ -1199,12 +1199,12 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |GeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _funcEnv_ be NewDeclarativeEnvironment(_scope_).
         1. Let _envRec_ be _funcEnv_'s EnvironmentRecord.
         1. Let _name_ be StringValue of |BindingIdentifier|.
         1. Perform _envRec_.CreateImmutableBinding(_name_, *false*).
-        1. Let _closure_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _funcEnv_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _funcEnv_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_closure_, _name_).
@@ -1217,7 +1217,7 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncGeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, _strict_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
@@ -1230,12 +1230,12 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncGeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _funcEnv_ be ! NewDeclarativeEnvironment(_scope_).
         1. Let _envRec_ be _funcEnv_'s EnvironmentRecord.
         1. Let _name_ be StringValue of |BindingIdentifier|.
         1. Perform ! _envRec_.CreateImmutableBinding(_name_).
-        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _funcEnv_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _funcEnv_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform ! SetFunctionName(_closure_, _name_).
@@ -1248,8 +1248,8 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncGeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Return _closure_.
@@ -1261,12 +1261,12 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncGeneratorExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _funcEnv_ be ! NewDeclarativeEnvironment(_scope_).
         1. Let _envRec_ be _funcEnv_'s EnvironmentRecord.
         1. Let _name_ be StringValue of |BindingIdentifier|.
         1. Perform ! _envRec_.CreateImmutableBinding(_name_).
-        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _funcEnv_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _funcEnv_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform ! SetFunctionName(_closure_, _name_).
@@ -1279,8 +1279,8 @@ emu-example pre {
       <emu-alg>
         1. If the function code for |AsyncFunctionExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Return _closure_.
       </emu-alg>
 
@@ -1290,12 +1290,12 @@ emu-example pre {
       <emu-alg>
         1. If the function code for |AsyncFunctionExpression| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _funcEnv_ be ! NewDeclarativeEnvironment(_scope_).
         1. Let _envRec_ be _funcEnv_'s EnvironmentRecord.
         1. Let _name_ be StringValue of |BindingIdentifier|.
         1. Perform ! _envRec_.CreateImmutableBinding(_name_).
-        1. Let _closure_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _funcEnv_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _funcEnv_, <ins>_privateScope_,</ins> _strict_).
         1. Perform ! SetFunctionName(_closure_, _name_).
         1. Perform ! _envRec_.InitializeBinding(_name_, _closure_).
         1. Return _closure_.
@@ -1306,9 +1306,9 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncArrowFunction| is strict mode code, let _strict_ be *true*. Otherwise, let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _parameters_ be |AsyncArrowBindingIdentifier|.
-        1. Let _closure_ be ! AsyncFunctionCreate(~Arrow~, _parameters_, |AsyncConciseBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be ! AsyncFunctionCreate(~Arrow~, _parameters_, |AsyncConciseBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Return _closure_.
       </emu-alg>
       <emu-grammar>
@@ -1317,10 +1317,10 @@ emu-example pre {
       <emu-alg>
         1. If the function code for this |AsyncArrowFunction| is strict mode code, let _strict_ be *true*. Otherwise, let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _head_ be CoveredAsyncArrowHead of |CoverCallExpressionAndAsyncArrowHead|.
         1. Let _parameters_ be the |ArrowFormalParameters| of _head_.
-        1. Let _closure_ be ! AsyncFunctionCreate(~Arrow~, _parameters_, |AsyncConciseBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be ! AsyncFunctionCreate(~Arrow~, _parameters_, |AsyncConciseBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Return _closure_.
       </emu-alg>
     </emu-clause>
@@ -1336,14 +1336,14 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |MethodDefinition| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. If _functionPrototype_ is present as a parameter, then
           1. Let _kind_ be ~Normal~.
           1. Let _prototype_ be _functionPrototype_.
         1. Else,
           1. Let _kind_ be ~Method~.
           1. Let _prototype_ be the intrinsic object %FunctionPrototype%.
-        1. Let _closure_ be FunctionCreate(_kind_, |UniqueFormalParameters|, |FunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_, _prototype_).
+        1. Let _closure_ be FunctionCreate(_kind_, |UniqueFormalParameters|, |FunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_, _prototype_).
         1. Perform MakeMethod(_closure_, _object_).
         1. Return the Record{[[Key]]: _propKey_, [[Closure]]: _closure_}.
       </emu-alg>
@@ -1361,9 +1361,9 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |MethodDefinition| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
         1. Let _formalParameterList_ be an instance of the production <emu-grammar>FormalParameters : [empty]</emu-grammar>.
-        1. Let _closure_ be FunctionCreate(~Method~, _formalParameterList_, |FunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _closure_ be FunctionCreate(~Method~, _formalParameterList_, |FunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform MakeMethod(_closure_, _object_).
         1. Perform SetFunctionName(_closure_, _propKey_, `"get"`).
         1. Let _desc_ be the PropertyDescriptor{[[Get]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
@@ -1375,8 +1375,8 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |MethodDefinition| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be FunctionCreate(~Method~, |PropertySetParameterList|, |FunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be FunctionCreate(~Method~, |PropertySetParameterList|, |FunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform MakeMethod(_closure_, _object_).
         1. Perform SetFunctionName(_closure_, _propKey_, `"set"`).
         1. Let _desc_ be the PropertyDescriptor{[[Set]]: _closure_, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
@@ -1388,8 +1388,8 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |GeneratorMethod| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be GeneratorFunctionCreate(~Method~, |UniqueFormalParameters|, |GeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be GeneratorFunctionCreate(~Method~, |UniqueFormalParameters|, |GeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform MakeMethod(_closure_, _object_).
         1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
@@ -1405,8 +1405,8 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |AsyncGeneratorMethod| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the running execution context's LexicalEnvironment.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Method~, |UniqueFormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be ! AsyncGeneratorFunctionCreate(~Method~, |UniqueFormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform ! MakeMethod(_closure_, _object_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
@@ -1422,8 +1422,8 @@ emu-example pre {
         1. ReturnIfAbrupt(_propKey_).
         1. If the function code for this |AsyncMethod| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. <ins>Let _privateNameScope_ be the PrivateNameEnvironment of the running execution context.</ins>
-        1. Let _closure_ be ! AsyncFunctionCreate(~Method~, |UniqueFormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. <ins>Let _privateScope_ be the PrivateEnvironment of the running execution context.</ins>
+        1. Let _closure_ be ! AsyncFunctionCreate(~Method~, |UniqueFormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform ! MakeMethod(_closure_, _object_).
         1. Perform ! SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
@@ -1432,20 +1432,55 @@ emu-example pre {
     </emu-clause>
 </emu-clause>
 
-<emu-clause id="sec-private-names">
-  <h1>Private Names and references</h1>
-<p>The <dfn>Private Name</dfn> specification type is used to describe a globally unique identifier which represents a private field name. A Private Name may be installed on any ECMAScript object with the PrivateFieldAdd internal algorithm, and then read or written using PrivateFieldGet and PrivateFieldSet.</p>
+<emu-clause id="sec-private-records" oldids="sec-private-names">
+  <h1>Private Records and references</h1>
+<p>The <dfn>Private Record</dfn> specification type is used to describe a globally unique record which represents a private field. A Private Record may be installed on any ECMAScript object with the PrivateFieldAdd internal algorithm, and then read or written using PrivateFieldGet and PrivateFieldSet.</p>
 
-  <p>Each Private Name value immutably holds an associated value called [[Description]] that is a String value.</p>
+<p>Each Private Record holds the following information:</p>
+<emu-table id="private-record" caption="Fields of the Private Record">
+  <table>
+    <thead>
+    <tr>
+      <th>
+        Field
+      </th>
+      <th>
+        Type
+      </th>
+      <th>
+        Description
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>
+        [[Description]]
+      </td>
+      <td>
+        ~string~
+      </td>
+      <td>
+        The string value passed to NewPrivateRecord when creating this Private Record.
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</emu-table>
+<emu-note type=editor>
+<p>
+  The list of fields in Private Records is expanded by the <a href="https://tc39.github.io/proposal-private-methods/">private methods and accessor proposal</a> which is closely following this one.
+</p>
+</emu-note>
 
-<p>All ECMAScript objects have a new additional internal slot, [[PrivateFieldValues]], which is a List of Records of the form { [[PrivateName]]: Private Name, [[PrivateFieldValue]]: ECMAScript value }. This List represents the values of the private fields for the object. All objects, including Proxies and all host environment-provided objects, have this internal slot, but primitives such as Numbers do not.</p>
+<p>All ECMAScript objects have a new additional internal slot, [[PrivateFieldValues]], which is a List of Records of the form { [[PrivateRecord]]: Private Record, [[PrivateFieldValue]]: ECMAScript value }. This List represents the values of the private fields for the object. All objects, including Proxies and all host environment-provided objects, have this internal slot, but primitives such as Numbers do not.</p>
 
 <emu-note type=editor>
 <p>
-  Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, Private Names specifically do not have this connotation: because the reference from the Private Name value to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the Private Name value.
+  Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, Private Records specifically do not have this connotation: because the reference from the Private Record value to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the Private Record value.
 </p>
 <p>
-  Private Names are a specification type here, not directly observable to ECMAScript code. However, in <a href="https://github.com/tc39/proposal-private-fields/blob/master/DECORATORS.md">a decorator integration strawman</a>, an object wrapping Private Names would be exposed to allow greater metaprogramming.
+  Private Records are a specification type here, not directly observable to ECMAScript code. However, in <a href="https://github.com/tc39/proposal-private-fields/blob/master/DECORATORS.md">a decorator integration strawman</a>, an object wrapping Private Records would be exposed to allow greater metaprogramming.
 </p>
 </emu-note>
 
@@ -1461,20 +1496,20 @@ emu-example pre {
   </emu-alg>
 </emu-clause>
 
-<emu-clause id="sec-newprivatename" aoid="NewPrivateName">
-  <h1>NewPrivateName ( _description_ )</h1>
+<emu-clause id="sec-newprivaterecord" aoid="NewPrivateRecord" oldids="sec-newprivatename">
+  <h1>NewPrivateRecord ( _description_ )</h1>
   <emu-alg>
-    1. Return a new unique Private Name value whose [[Description]] value is _description_.
+    1. Return a new unique Private Record value whose [[Description]] value is _description_.
   </emu-alg>
 </emu-clause>
 
 <emu-clause id="sec-privatefieldfind" aoid="PrivateFieldFind">
   <h1>PrivateFieldFind (_P_, _O_)</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Record value.
     1. Assert: _O_ is an object with a [[PrivateFieldValues]] internal slot.
     1. For each element _entry_ in _O_.[[PrivateFieldValues]],
-      1. If _entry_.[[PrivateName]] is _P_, return _entry_.
+      1. If _entry_.[[PrivateRecord]] is _P_, return _entry_.
     1. Return ~empty~.
   </emu-alg>
 </emu-clause>
@@ -1482,18 +1517,18 @@ emu-example pre {
 <emu-clause id="sec-privatefieldadd" aoid="PrivateFieldAdd">
   <h1>PrivateFieldAdd (_P_, _O_, _value_)</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Record value.
     1. If _O_ is not an object, throw a *TypeError* exception.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is not ~empty~, throw a *TypeError* exception.
-    1. Append { [[PrivateName]]: P, [[PrivateFieldValue]]: _value_ } to _O_.[[PrivateFieldValues]].
+    1. Append { [[PrivateRecord]]: P, [[PrivateFieldValue]]: _value_ } to _O_.[[PrivateFieldValues]].
   </emu-alg>
 </emu-clause>
 
 <emu-clause id="sec-privatefieldget" aoid="PrivateFieldGet">
   <h1>PrivateFieldGet (_P_, _O_ )</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Record value.
     1. If _O_ is not an object, throw a *TypeError* exception.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
@@ -1504,7 +1539,7 @@ emu-example pre {
 <emu-clause id="sec-privatefieldset" aoid="PrivateFieldSet">
   <h1>PrivateFieldSet (_P_, _O_, _value_ )</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Record value.
     1. If _O_ is not an object, throw a *TypeError* exception.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
@@ -1582,9 +1617,9 @@ emu-example pre {
           1. Assert: In this case, _base_ will never be *null* or *undefined*.
           1. Let _base_ be ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
-          1. <ins>Let _env_ be the running execution context's PrivateNameEnvironment.</ins>
+          1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
           1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Name.</ins>
+          1. <ins>Assert: _field_ is a Private Record.</ins>
           1. <ins>Return ? PrivateFieldGet(_field_, _base_).</ins>
         1. Return ? _base_.[[Get]](GetReferencedName(_V_), GetThisValue(_V_)).
       1. Else _base_ must be an Environment Record,
@@ -1613,9 +1648,9 @@ emu-example pre {
           1. Assert: In this case, _base_ will never be *null* or *undefined*.
           1. Set _base_ to ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
-          1. <ins>Let _env_ be the running execution context's PrivateNameEnvironment.</ins>
+          1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
           1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Name.</ins>
+          1. <ins>Assert: _field_ is a Private Record.</ins>
           1. <ins>Perform ? PrivateFieldSet(_field_, _base_, _W_).</ins>
         1. Else,
           1. Let _succeeded_ be ? _base_.[[Set]](GetReferencedName(_V_), _W_, GetThisValue(_V_)).
@@ -1684,18 +1719,18 @@ emu-example pre {
         </tr>
         <tr>
           <td>
-            <ins>PrivateNameEnvironment</ins>
+            <ins>PrivateEnvironment</ins>
           </td>
           <td>
-            <ins>Identifies the Lexical Environment whose EnvironmentRecord holds internal Private Names created by |FieldDefinition|s.</ins>
+            <ins>Identifies the Lexical Environment whose EnvironmentRecord holds internal Private Records created by |FieldDefinition|s.</ins>
           </td>
         </tr>
         </tbody>
       </table>
     </emu-table>
-  <emu-note>The PrivateNameEnvironment Lexical Context is always a chain of Declaration Contexts. Each name begins with `"#"`.</emu-note>
+  <emu-note>The PrivateEnvironment Lexical Context is always a chain of Declaration Contexts. Each name begins with `"#"`.</emu-note>
 
-  <emu-note type=editor>Private Names could have been specified by lumping it all into the LexicalEnvironment. However, this would create false conflicts with object environment records that would need to be resolved. Further, it seems logically cleaner to separate out the distinct namespace into a distinct object.</emu-note>
+  <emu-note type=editor>Private Records could have been specified by lumping it all into the LexicalEnvironment. However, this would create false conflicts with object environment records that would need to be resolved. Further, it seems logically cleaner to separate out the distinct namespace into a distinct object.</emu-note>
   </emu-clause>
 
   <!-- es6num="9.2" -->
@@ -1729,13 +1764,13 @@ emu-example pre {
         </tr>
         <tr>
           <td>
-            <ins>[[PrivateNameEnvironment]]</ins>
+            <ins>[[PrivateEnvironment]]</ins>
           </td>
           <td>
             <ins>Lexical Environment</ins>
           </td>
           <td>
-            <ins>The Lexical Environment for Private Names that the function was closed over. Used as the outer environment for Private Names when evaluating the code of the function.</ins>
+            <ins>The Lexical Environment for Private Records that the function was closed over. Used as the outer environment for Private Records when evaluating the code of the function.</ins>
           </td>
         </tr>
         <tr>
@@ -1855,14 +1890,14 @@ emu-example pre {
 
     <!-- es6num="9.2.4" -->
     <emu-clause id="sec-functioninitialize" aoid="FunctionInitialize">
-      <h1>FunctionInitialize ( _F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateNameScope_</ins> )</h1>
-      <p>The abstract operation FunctionInitialize requires the arguments: a function object _F_, _kind_ which is one of (Normal, Method, Arrow), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_<ins>, and a Lexical environment _PrivateNameScope_</ins>. FunctionInitialize performs the following steps:</p>
+      <h1>FunctionInitialize ( _F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateScope_</ins> )</h1>
+      <p>The abstract operation FunctionInitialize requires the arguments: a function object _F_, _kind_ which is one of (Normal, Method, Arrow), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_<ins>, and a Lexical environment _PrivateScope_</ins>. FunctionInitialize performs the following steps:</p>
       <emu-alg>
         1. Let _len_ be the ExpectedArgumentCount of _ParameterList_.
         1. Perform ! SetFunctionLength(_F_, _len_).
         1. Let _Strict_ be _F_.[[Strict]].
         1. Set _F_.[[Environment]] to _Scope_.
-        1. <ins>Set _F_.[[PrivateNameEnvironment]] to _PrivateNameScope_.</ins>
+        1. <ins>Set _F_.[[PrivateEnvironment]] to _PrivateScope_.</ins>
         1. Set _F_.[[FormalParameters]] to _ParameterList_.
         1. Set _F_.[[ECMAScriptCode]] to _Body_.
         1. Set _F_.[[ScriptOrModule]] to GetActiveScriptOrModule().
@@ -1875,46 +1910,46 @@ emu-example pre {
 
     <!-- es6num="9.2.5" -->
     <emu-clause id="sec-functioncreate" aoid="FunctionCreate">
-      <h1>FunctionCreate ( _kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateNameScope_,</ins> _Strict_ [ , _prototype_ ] )</h1>
-      <p>The abstract operation FunctionCreate requires the arguments: _kind_ which is one of (Normal, Method, Arrow), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateNameScope_,</ins> a Boolean flag _Strict_, and optionally, an object _prototype_. FunctionCreate performs the following steps:</p>
+      <h1>FunctionCreate ( _kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateScope_,</ins> _Strict_ [ , _prototype_ ] )</h1>
+      <p>The abstract operation FunctionCreate requires the arguments: _kind_ which is one of (Normal, Method, Arrow), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateScope_,</ins> a Boolean flag _Strict_, and optionally, an object _prototype_. FunctionCreate performs the following steps:</p>
       <emu-alg>
         1. If _prototype_ is not present, then
           1. Set _prototype_ to the intrinsic object %FunctionPrototype%.
         1. If _kind_ is not ~Normal~, let _allocKind_ be `"non-constructor"`.
         1. Else, let _allocKind_ be `"normal"`.
         1. Let _F_ be FunctionAllocate(_prototype_, _Strict_, _allocKind_).
-        1. Return FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateNameScope_</ins>).
+        1. Return FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateScope_</ins>).
       </emu-alg>
     </emu-clause>
 
     <!-- es6num="9.2.6" -->
     <emu-clause id="sec-generatorfunctioncreate" aoid="GeneratorFunctionCreate">
-      <h1>GeneratorFunctionCreate ( _kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateNameScope_,</ins> _Strict_ )</h1>
-      <p>The abstract operation GeneratorFunctionCreate requires the arguments: _kind_ which is one of (Normal, Method), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateNameScope_,</ins> and a Boolean flag _Strict_. GeneratorFunctionCreate performs the following steps:</p>
+      <h1>GeneratorFunctionCreate ( _kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateScope_,</ins> _Strict_ )</h1>
+      <p>The abstract operation GeneratorFunctionCreate requires the arguments: _kind_ which is one of (Normal, Method), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateScope_,</ins> and a Boolean flag _Strict_. GeneratorFunctionCreate performs the following steps:</p>
       <emu-alg>
         1. Let _functionPrototype_ be the intrinsic object %Generator%.
         1. Let _F_ be FunctionAllocate(_functionPrototype_, _Strict_, `"generator"`).
-        1. Return FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateNameScope_</ins>).
+        1. Return FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateScope_</ins>).
       </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-asyncgeneratorfunctioncreate" aoid="AsyncGeneratorFunctionCreate">
-      <h1>AsyncGeneratorFunctionCreate (_kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateNameScope_,</ins> _Strict_)</h1>
-      <p>The abstract operation AsyncGeneratorFunctionCreate requires the arguments: _kind_ which is one of (~Normal~, ~Method~), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateNameScope_,</ins> and a Boolean flag _Strict_. AsyncGeneratorFunctionCreate performs the following steps:</p>
+      <h1>AsyncGeneratorFunctionCreate (_kind_, _ParameterList_, _Body_, _Scope_, <ins>_PrivateScope_,</ins> _Strict_)</h1>
+      <p>The abstract operation AsyncGeneratorFunctionCreate requires the arguments: _kind_ which is one of (~Normal~, ~Method~), a parameter list Parse Node specified by _ParameterList_, a body Parse Node specified by _Body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateScope_,</ins> and a Boolean flag _Strict_. AsyncGeneratorFunctionCreate performs the following steps:</p>
       <emu-alg>
         1. Let _functionPrototype_ be the intrinsic object %AsyncGenerator%.
         1. Let _F_ be ! FunctionAllocate(_functionPrototype_, _Strict_, `"generator"`).
-        1. Return ! FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateNameScope_</ins>).
+        1. Return ! FunctionInitialize(_F_, _kind_, _ParameterList_, _Body_, _Scope_<ins>, _PrivateScope_</ins>).
       </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-async-functions-abstract-operations-async-function-create" aoid="AsyncFunctionCreate">
-      <h1>AsyncFunctionCreate ( _kind_, _parameters_, _body_, _Scope_, <ins>_PrivateNameScope_,</ins> _Strict_ )</h1>
-      <p>The abstract operation AsyncFunctionCreate requires the arguments: _kind_ which is one of (~Normal~, ~Method~, ~Arrow~), a parameter list Parse Node specified by _parameters_, a body Parse Node specified by _body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateNameScope_,</ins> and a Boolean flag _Strict_. AsyncFunctionCreate performs the following steps:</p>
+      <h1>AsyncFunctionCreate ( _kind_, _parameters_, _body_, _Scope_, <ins>_PrivateScope_,</ins> _Strict_ )</h1>
+      <p>The abstract operation AsyncFunctionCreate requires the arguments: _kind_ which is one of (~Normal~, ~Method~, ~Arrow~), a parameter list Parse Node specified by _parameters_, a body Parse Node specified by _body_, a Lexical Environment specified by _Scope_, <ins>a Lexical Environment specified by _PrivateScope_,</ins> and a Boolean flag _Strict_. AsyncFunctionCreate performs the following steps:</p>
       <emu-alg>
         1. Let _functionPrototype_ be the intrinsic object %AsyncFunctionPrototype%.
         2. Let _F_ be ! FunctionAllocate(_functionPrototype_, _Strict_, `"async"`).
-        3. Return ! FunctionInitialize(_F_, _kind_, _parameters_, _body_, _Scope_<ins>, _PrivateNameScope_</ins>).
+        3. Return ! FunctionInitialize(_F_, _kind_, _parameters_, _body_, _Scope_<ins>, _PrivateScope_</ins>).
       </emu-alg>
     </emu-clause>
 
@@ -1931,8 +1966,8 @@ emu-example pre {
         1. Set the ScriptOrModule of _scriptCxt_ to _scriptRecord_.
         1. Set the VariableEnvironment of _scriptCxt_ to _globalEnv_.
         1. Set the LexicalEnvironment of _scriptCxt_ to _globalEnv_.
-        1. <ins>Let _privateNameEnv_ be a new Lexical Environment.</ins>
-        1. <ins>Set the PrivateNameEnvironment of _scriptCxt_ to _privateNameEnv_.</ins>
+        1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
+        1. <ins>Set the PrivateEnvironment of _scriptCxt_ to _privateEnv_.</ins>
         1. Suspend the currently running execution context.
         1. Push _scriptCxt_ on to the execution context stack; _scriptCxt_ is now the running execution context.
         1. Let _scriptBody_ be _scriptRecord_.[[ECMAScriptCode]].
@@ -1963,7 +1998,7 @@ emu-example pre {
           1. Let _localEnv_ be NewFunctionEnvironment(_F_, _newTarget_).
           1. Set the LexicalEnvironment of _calleeContext_ to _localEnv_.
           1. Set the VariableEnvironment of _calleeContext_ to _localEnv_.
-          1. <ins>Set the PrivateNameEnvironment of _calleeContext_ to  _F_.[[PrivateNameEnvironment]].</ins>
+          1. <ins>Set the PrivateEnvironment of _calleeContext_ to  _F_.[[PrivateEnvironment]].</ins>
           1. If _callerContext_ is not already suspended, suspend _callerContext_.
           1. Push _calleeContext_ onto the execution context stack; _calleeContext_ is now the running execution context.
           1. NOTE: Any exception objects produced after this point are associated with _calleeRealm_.
@@ -1974,20 +2009,20 @@ emu-example pre {
     <!-- es6num="14.1.19" -->
     <emu-clause id="sec-function-definitions-runtime-semantics-instantiatefunctionobject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateNameScope_</ins>.</p>
+      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateScope_</ins>.</p>
       <emu-see-also-para op="InstantiateFunctionObject"></emu-see-also-para>
       <emu-grammar>FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
       <emu-alg>
         1. If the function code for |FunctionDeclaration| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _F_ be FunctionCreate(~Normal~, |FormalParameters|, |FunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be FunctionCreate(~Normal~, |FormalParameters|, |FunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform MakeConstructor(_F_).
         1. Perform SetFunctionName(_F_, _name_).
         1. Return _F_.
       </emu-alg>
       <emu-grammar>FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
       <emu-alg>
-        1. Let _F_ be FunctionCreate(~Normal~, |FormalParameters|, |FunctionBody|, _scope_, <ins>_privateNameScope_,</ins> *true*).
+        1. Let _F_ be FunctionCreate(~Normal~, |FormalParameters|, |FunctionBody|, _scope_, <ins>_privateScope_,</ins> *true*).
         1. Perform MakeConstructor(_F_).
         1. Perform SetFunctionName(_F_, `"default"`).
         1. Return _F_.
@@ -2000,13 +2035,13 @@ emu-example pre {
     <!-- es6num="14.4.12" -->
     <emu-clause id="sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateNameScope_</ins>.</p>
+      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateScope_</ins>.</p>
       <emu-see-also-para op="InstantiateFunctionObject"></emu-see-also-para>
       <emu-grammar>GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
       <emu-alg>
         1. If the function code for |GeneratorDeclaration| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _F_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_F_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_F_, _name_).
@@ -2014,7 +2049,7 @@ emu-example pre {
       </emu-alg>
       <emu-grammar>GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
       <emu-alg>
-        1. Let _F_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_,<ins>_privateNameScope_,</ins>  *true*).
+        1. Let _F_ be GeneratorFunctionCreate(~Normal~, |FormalParameters|, |GeneratorBody|, _scope_, <ins>_privateScope_,</ins>  *true*).
         1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_F_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_F_, `"default"`).
@@ -2027,14 +2062,14 @@ emu-example pre {
 
     <emu-clause id="sec-asyncgenerator-definitions-instantiatefunctionobject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateNameScope_</ins>.</p>
+      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateScope_</ins>.</p>
       <emu-grammar>
         AsyncGeneratorDeclaration : `async` [no LineTerminator here] `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
       </emu-grammar>
       <emu-alg>
         1. If the function code for |AsyncGeneratorDeclaration| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
         1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _F_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be ! AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ! ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform ! DefinePropertyOrThrow(_F_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform ! SetFunctionName(_F_, _name_).
@@ -2046,7 +2081,7 @@ emu-example pre {
       </emu-grammar>
       <emu-alg>
         1. If the function code for |AsyncGeneratorDeclaration| is strict mode code, let _strict_ be *true*. Otherwise let _strict_ be *false*.
-        1. Let _F_ be AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be AsyncGeneratorFunctionCreate(~Normal~, |FormalParameters|, |AsyncGeneratorBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Let _prototype_ be ObjectCreate(%AsyncGeneratorPrototype%).
         1. Perform DefinePropertyOrThrow(_F_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_F_, `"default"`).
@@ -2059,14 +2094,14 @@ emu-example pre {
 
     <emu-clause id="sec-async-function-definitions-InstantiateFunctionObject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateNameScope_</ins>.</p>
+      <p>With parameter<ins>s</ins> _scope_ <ins>and _privateScope_</ins>.</p>
       <emu-grammar>
         AsyncFunctionDeclaration : `async` [no LineTerminator here] `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
       </emu-grammar>
       <emu-alg>
         1. If the function code for |AsyncFunctionDeclaration| is strict mode code, let _strict_ be *true*. Otherwise, let _strict_ be *false*.
         1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _F_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform ! SetFunctionName(_F_, _name_).
         1. Return _F_.
       </emu-alg>
@@ -2075,7 +2110,7 @@ emu-example pre {
       </emu-grammar>
       <emu-alg>
         1. If the function code for |AsyncFunctionDeclaration| is strict mode code, let _strict_ be *true*. Otherwise, let _strict_ be *false*.
-        1. Let _F_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateNameScope_,</ins> _strict_).
+        1. Let _F_ be ! AsyncFunctionCreate(~Normal~, |FormalParameters|, |AsyncFunctionBody|, _scope_, <ins>_privateScope_,</ins> _strict_).
         1. Perform ! SetFunctionName(_F_, `"default"`).
         1. Return _F_.
       </emu-alg>
