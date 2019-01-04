@@ -386,6 +386,7 @@ emu-example pre {
     1. Else,
       1. Assert: IsPropertyKey(_fieldName_) is *true*.
       1. Perform ? CreateDataPropertyOrThrow(_receiver_, _fieldName_, _initValue_).
+    1. Return.
     </emu-alg>
 </emu-clause>
 
@@ -1395,7 +1396,7 @@ emu-example pre {
         1. Perform DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
       <emu-grammar>
         AsyncGeneratorMethod : `async` [no LineTerminator here] `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`
@@ -1412,7 +1413,7 @@ emu-example pre {
         1. Perform ! DefinePropertyOrThrow(_closure_, `"prototype"`, PropertyDescriptor{[[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false*}).
         1. Perform ! SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
       <emu-grammar>
         AsyncMethod : `async` [no LineTerminator here] PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
@@ -1427,7 +1428,7 @@ emu-example pre {
         1. Perform ! MakeMethod(_closure_, _object_).
         1. Perform ! SetFunctionName(_closure_, _propKey_).
         1. Let _desc_ be the PropertyDescriptor{[[Value]]: _closure_, [[Writable]]: *true*, [[Enumerable]]: _enumerable_, [[Configurable]]: *true*}.
-        1. <del>Return</del><ins>Perform</ins> ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
+        1. Return ? DefinePropertyOrThrow(_object_, _propKey_, _desc_).
       </emu-alg>
     </emu-clause>
 </emu-clause>
