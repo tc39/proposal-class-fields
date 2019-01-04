@@ -93,36 +93,75 @@ By defining things which are not visible outside of the class, ESnext provides s
 
 Note that ESnext provides private fields only as declared up-front in a field declaration; private fields cannot be created later, ad-hoc, through assigning to them, the way that normal properties can.
 
-## Details of this proposal
 
-See the [draft specification](https://tc39.github.io/proposal-class-fields/) for full details.
+## Major design points
 
-For the rational for the syntax used for private fields, see the [relevant FAQ](PRIVATE_SYNTAX_FAQ.md).
+### Public fields created with Object.defineProperty
 
-### Orthogonality
-
-This proposal provides fields which are orthogonal on the following axes:
-- Placement: Static vs instance -- static postponed to [follow-on proposal](https://github.com/tc39/proposal-static-class-features/)
-- Visibility/name: public vs private vs computed property name
-- With or without initializer
-
-The variety of forms is visible in this example:
+A public field declarations define fields on instances with the internals of `Object.defineProperty` (which we refer to in TC39 jargon as `[[Define]]` semantics), rather than with `this.field = value;` (referred to as `[[Set]]` semantics). Here's an example of the impact:
 
 ```js
-class C {
-  z;
-  #w = 2;
-  [b];
+class A {
+  set x(value) { console.log(value); }
+}
+class B extends A {
+  x = 1;
 }
 ```
 
-Omitted from this proposal are private methods and accessors, private members of object literals, and decorators. These may be added in a later proposal, as detailed in the [unified class features proposal](https://github.com/littledan/proposal-unified-class-features).
+With the adopted semantics, `new B()` will result in an object which has a property `x` with the value `1`, and nothing will be written to the console. With the alternate `[[Set]]` semantics, `1` would be written to the console, and attempts to access the property would lead to a `TypeError` (because the getter is missing).
 
-## Changes vs previous proposals
+The choice between `[[Set]]` and `[[Define]]` is a design decision contrasting different kinds of expectations of behavior: Expectations that the field will be created as a data property regardless of what the superclass contains, vs expectations that the setter would be called. Following a lengthy discussion, TC39 settled on `[[Define]]` semantics, finding that it's important to preserve the first expectation.
 
-- Comma-separated multiple definitions: These have been [removed from the proposal](https://github.com/tc39/proposal-class-fields/issues/20), each declaration must stand alone and be terminated with a semicolon (or ASI-friendly line break). Having multiple comma-separated definitions may be the subject of a later proposal.
-- Private static fields: These just fall out naturally "from the grid" when combining the proposals. It would've taken special spec text to specifically block them.
+The decision to base public field semantics on `Object.defineProperty` was based on extensive discussion within TC39 and consultation with the developer community. Unfortunately, [the community was rather split](https://github.com/tc39/proposal-class-fields/issues/151#issuecomment-431597270), while TC39 came down rather strongly on the side of `Object.defineProperty`.
 
+As a mitigation, the [decorators proposal](https://github.com/tc39/proposal-decorators/) provides the tools to write a decorator to make a public field declaration use `[[Set]]` semantics. Even if you disagree with the default, the other option is available. (This would be the case regardless of which default TC39 chose.)
+
+Public fields are [shipping](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 with `[[Define]]` semantics, and this decision on semantics is unlikely to be revisited.
+
+### Fields without initializers are set to `undefined`
+
+Both public and private field declarations create a field in the instance, whether or not there's an initializer present. If there's no initializer, the field is set to `undefined`. This differs a bit from certain transpiler implementations, which would just entirely ignore a field declaration which has no initializer.
+
+For example, in the following example, `new D` would result in an object whose `x` property is `undefined`, not `1`.
+
+```js
+class C {
+  y = 1;
+}
+class D {
+  y;
+}
+```
+
+The semantics of setting fields without initializers to `undefined` as opposed to erasing them is that field declarations give a reliable basis to ensure that properties are present on objects that are created. This helps programmers keep objects in the same general state, which can make it easy to reason about and, sometimes, more optimizable in implementations.
+
+### Private syntax
+
+Private fields are based on syntax using a `#`, both when declaring a field and when accessing it.
+
+```js
+class X {
+  #foo;
+  method() {
+    console.log(this.#foo)
+  }
+}
+```
+
+This syntax tries to be both terse and intuitive, although it's rather different from other programming languages. See [the private syntax FAQ](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md) for discussion of alternatives considered and the constraints that led to this syntax.
+
+### No backdoor to access private
+
+Private fields provide a strong encapsulation boundary: It's impossible to access the private field from outside of the class, unless there is some explicit code to expose it (for example, providing a getter). This differs from JavaScript properties, which support various kinds of reflection and metaprogramming, and is instead analogous to mechanisms like closures and `WeakMap`, which don't provide access to their internals. See [these FAQ entries](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#why-doesnt-this-proposal-allow-some-mechanism-for-reflecting-on--accessing-private-fields-from-outside-the-class-which-declares-them-eg-for-testing-dont-other-languages-normally-allow-that) for more information on the motivation for this decision.
+
+Some mitigations which make it easier to access
+- Implementations' developer tools may provide access to private fields ([V8 issue](https://bugs.chromium.org/p/v8/issues/detail?id=8337)).
+- The [decorators proposal](https://github.com/tc39/proposal-decorators/) gives tools for easy-to-use and controlled access to private fields.
+
+## Specification
+
+See the [draft specification](https://tc39.github.io/proposal-class-fields/) for full details.
 
 ## Status
 
