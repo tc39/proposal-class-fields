@@ -150,6 +150,14 @@ Here, the user likely intended to call the `print` method on `this.%x`, but inst
 
 In the end, the only other options are longer sequences of punctuation, which seems suboptimal compared to a single character.
 
+## Why not use `private.x` to refer to a private field of `this`, and `private(that).x` to refer to a private field of another object?
+
+There are a few issues with this approach:
+- If declarations are `private x;`, programmers may be tempted to access fields as `this.x` rather than `private.x`; if they do this for both setting and getting the private field (e.g., if there's no initializer), their code will "just work.
+- `private(that)` looks like an expression on its own, but this leads to problems:
+  - If `private(that)` evaluated to an object that had the private fields in it, it would be difficult to optimize away the additional, separate allocation of that object.
+  - if `private(that)` were a syntax error by itself, and forced to have a property access after it, this would be a surprising break from how functions and pseudo-functions (like `import()`) work in JavaScript.
+
 ## Why doesn't this proposal allow some mechanism for reflecting on / accessing private fields from outside the class which declares them (e.g. for testing)? Don't other languages normally allow that?
 
 Doing so would violate encapsulation (see [below](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#why-is-encapsulation-a-goal-of-this-proposal)). That other languages allow it isn't sufficient reason on its own, especially since in some of them (e.g. C++) this is accomplished by modifying memory directly and is not necessarily a goal.
