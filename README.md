@@ -129,7 +129,7 @@ For example, in the following example, `new D` would result in an object whose `
 class C {
   y = 1;
 }
-class D {
+class D extends C {
   y;
 }
 ```
