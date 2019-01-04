@@ -284,3 +284,32 @@ F.prototype.checkF.call(obj);  // throws
 This weird phantom object `obj` has `G`'s "brand" and not `F`'s! This is not considered "broken", it's just that the nature of dynamic prototype chains for classes gives programmers the flexibility to do this sort of thing. Sometimes, it's more useful to have predictability than flexibility.
 
 This pattern can be prevented by preventing mutations to the prototype chain which is dynamically queried when constructing objects (as part of ES2015). For example, you can call `Object.preventExtensions(G)` to ensure that `G`'s superclass remains `F`. In this case, an object which doesn't throw in response to `checkG` will also have a private field `#f`.
+
+## How do private fields interact with Proxy?
+
+Private fields of a Proxy target aren't accessible from the Proxy itself. For example, the following will throw a TypeError:
+```js
+class K { #x; get x() { return this.x; } }
+let k = new Proxy(new K, { });
+k.x  // TypeError
+```
+
+This behavior is analogous to internal slots and WeakMaps: the private field in the target is *not* forwarded through the Proxy. Although this behavior doesn't meet some hopes for Proxy serving as a transparent way to observe operations against objects, the no-forwarding behavior enables the following:
+- Private fields can be used for polyfills matching the behavior of internal slots, without deviation in behavior with respect to Proxy.
+- The Proxy target is encapsulated, without uncontrolled leaking knowledge about the target to the consumer of the Proxy, and without leaking any information about the private field to the Proxy traps.
+- Semantics are analogous to WeakMap, giving programmers a simple mental model (everything is either a property or a WeakMap) rather than a third alternative.
+
+Conversely, Proxy objects can have private fields directly defined on them using the "super return trick", as in the following example:
+```js
+class Super { constructor(x) { return x; } }
+class Trick extends Super {
+  #x;
+  checkX() { this.#x; }
+}
+
+let target = { };
+let proxy = new Proxy(target, { });
+new Trick(proxy);
+Trick.prototype.checkX(proxy);   // No exception thrown
+Trick.prototype.checkX(target);  // TypeError
+```
