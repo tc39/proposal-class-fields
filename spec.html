@@ -1522,7 +1522,7 @@ emu-example pre {
   <h1>PrivateFieldAdd (_P_, _O_, _value_)</h1>
   <emu-alg>
     1. Assert: _P_ is a Private Record value.
-    1. If _O_ is not an object, throw a *TypeError* exception.
+    1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is not ~empty~, throw a *TypeError* exception.
     1. Append { [[PrivateRecord]]: P, [[PrivateFieldValue]]: _value_ } to _O_.[[PrivateFieldValues]].
@@ -1533,7 +1533,7 @@ emu-example pre {
   <h1>PrivateFieldGet (_P_, _O_ )</h1>
   <emu-alg>
     1. Assert: _P_ is a Private Record value.
-    1. If _O_ is not an object, throw a *TypeError* exception.
+    1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
     1. Return _entry_.[[PrivateFieldValue]].
@@ -1544,7 +1544,7 @@ emu-example pre {
   <h1>PrivateFieldSet (_P_, _O_, _value_ )</h1>
   <emu-alg>
     1. Assert: _P_ is a Private Record value.
-    1. If _O_ is not an object, throw a *TypeError* exception.
+    1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
     1. Set _entry_.[[PrivateFieldValue]] to _value_.
