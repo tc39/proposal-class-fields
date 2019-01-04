@@ -275,12 +275,12 @@ emu-example pre {
       ClassElementName[Yield, Await] : PrivateIdentifier
   </emu-grammar>
   <emu-alg>
-    1. Let _bindingName_ be StringValue of |PrivateIdentifier|.
-    1. Let _field_ be NewPrivateRecord(_bindingName_).
+    1. Let _privateIdentifier_ be StringValue of |PrivateIdentifier|.
+    1. Let _privateRecord_ be NewPrivateRecord(_privateIdentifier_).
     1. Let _scope_ be the running execution context's PrivateEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
-    1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
-    1. Return _field_.
+    1. Perform ! _scopeEnvRec_.InitializeBinding(_privateIdentifier_, _privateRecord_).
+    1. Return _privateRecord_.
   </emu-alg>
   <emu-note type=editor>Each time a class declaration executes, distinct internal Private Records are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
@@ -313,8 +313,8 @@ emu-example pre {
     FieldDefinition : ClassElementName Initializer?
   </emu-grammar>
   <emu-alg>
-    1. Let _fieldName_ be the result of evaluating |ClassElementName|.
-    1. ReturnIfAbrupt(_fieldName_).
+    1. Let _name_ be the result of evaluating |ClassElementName|.
+    1. ReturnIfAbrupt(_name_).
     1. If |Initializer_opt| is present,
       1. Let _lex_ be the Lexical Environment of the running execution context.
       1. Let _formalParameterList_ be an instance of the production <emu-grammar>FormalParameters : [empty]</emu-grammar>.
@@ -326,7 +326,7 @@ emu-example pre {
       1. Let _initializer_ be ~empty~.
       1. Let _isAnonymousFunctionDeclaration_ be *false*.
     1. Return a Record {
-         [[Name]]: _fieldName_, 
+         [[Name]]: _name_,
          [[Initializer]]: _initializer_,
          [[IsAnonymousFunctionDefinition]]: _isAnonymousFunctionDefinition_
        }.
@@ -376,7 +376,7 @@ emu-example pre {
     <emu-alg>
     1. Assert: Type(_receiver_) is Object.
     1. Assert: _fieldRecord_ is a Record as created by ClassFieldDefinitionEvaluation.
-    1. Let _fieldName_ be _fieldRecord_.[[Name]].
+    1. Let _name_ be _fieldRecord_.[[Name]].
     1. Let _initializer_ be _fieldRecord_.[[Initializer]].
     1. If _initializer_ is not ~empty~, then
       1. Let _initValue_ be ? Call(_initializer_, _receiver_).
@@ -1577,7 +1577,7 @@ emu-example pre {
   <emu-note>
     <p>The Reference type is used to explain the behaviour of such operators as `delete`, `typeof`, the assignment operators, the `super` keyword and other language features. For example, the left-hand operand of an assignment is expected to produce a reference.</p>
   </emu-note>
-  <p>A <dfn>Reference</dfn> is a resolved name or property binding. A Reference consists of <ins>four</ins> components, the <em>base</em> value, the <em>referenced name</em>, the Boolean valued <em>strict reference</em> flag, <ins>and the Boolean valued <em>private reference</em> flag</ins>. The <em>base</em> value is either *undefined*, an Object, a Boolean, a String, a Symbol, a Number, or an Environment Record (<emu-xref href="#sec-environment-records"></emu-xref>). A _base_ value of *undefined* indicates that the Reference could not be resolved to a binding. The <em>referenced name</em> is a String value or a Symbol value.</p>
+  <p>A <dfn>Reference</dfn> is a resolved name or property binding. A Reference consists of three components, the <em>base</em> value, the <em>referenced name</em>, and the Boolean valued <em>strict reference</em> flag. The <em>base</em> value is either *undefined*, an Object, a Boolean, a String, a Symbol, a Number, or an Environment Record (<emu-xref href="#sec-environment-records"></emu-xref>). A _base_ value of *undefined* indicates that the Reference could not be resolved to a binding. The <em>referenced name</em> is a String value or a Symbol value, <ins>or a Private Record</ins>.</p>
   <p>A Super Reference is a Reference that is used to represent a name binding that was expressed using the super keyword. A Super Reference has an additional _thisValue_ component and its _base_ value will never be an Environment Record.</p>
   <p>The following abstract operations are used in this specification to access the components of references:</p>
   <ul>
@@ -1603,7 +1603,7 @@ emu-example pre {
       IsSuperReference(V). Returns *true* if this reference has a _thisValue_ component.
     </li>
     <li>
-      <ins>IsPrivateReference(V). Returns the <i>private reference</i> flag component of the reference V.</ins>
+      <ins>IsPrivateReference(V). Returns *true* if the <i>referenced name</i> component of the reference V is a Private Record.</ins>
     </li>
   </ul>
   <p>The following abstract operations are used in this specification to operate on references:</p>
@@ -1621,10 +1621,7 @@ emu-example pre {
           1. Assert: In this case, _base_ will never be *null* or *undefined*.
           1. Let _base_ be ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
-          1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
-          1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Record.</ins>
-          1. <ins>Return ? PrivateFieldGet(_field_, _base_).</ins>
+          1. <ins>Return ? PrivateFieldGet(GetReferencedName(_V_), _base_).</ins>
         1. Return ? _base_.[[Get]](GetReferencedName(_V_), GetThisValue(_V_)).
       1. Else _base_ must be an Environment Record,
         1. Return ? _base_.GetBindingValue(GetReferencedName(_V_), IsStrictReference(_V_)) (see <emu-xref href="#sec-environment-records"></emu-xref>).
@@ -1652,10 +1649,7 @@ emu-example pre {
           1. Assert: In this case, _base_ will never be *null* or *undefined*.
           1. Set _base_ to ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
-          1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
-          1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Record.</ins>
-          1. <ins>Perform ? PrivateFieldSet(_field_, _base_, _W_).</ins>
+          1. <ins>Return ? PrivateFieldSet(GetReferencedName(_V_), _base_, _W_).</ins>
         1. Else,
           1. Let _succeeded_ be ? _base_.[[Set]](GetReferencedName(_V_), _W_, GetThisValue(_V_)).
           1. If _succeeded_ is *false* and IsStrictReference(_V_) is *true*, throw a *TypeError* exception.
@@ -1681,9 +1675,13 @@ emu-example pre {
   -->
 
   <emu-clause id="sec-makeprivatereference" aoid="MakePrivateReference">
-    <h1>MakePrivateReference ( _baseValue_, _fieldName_ )</h1>
+    <h1>MakePrivateReference ( _baseValue_, _privateIdentifier_ )</h1>
     <emu-alg>
-      1. Return a value of type Reference whose base value is _baseValue_, whose referenced name is _fieldName_, whose strict reference flag is *true*, and whose private reference component is *true*.
+      1. Let _env_ be the running execution context's PrivateEnvironment.</ins>
+      1. Let _privateRecordBinding_ be ? ResolveBinding(_privateIdentifier_, _env_).</ins>
+      1. Let _privateRecord_ be GetValue(_privateRecordBinding_).
+      1. Assert: _privateRecord_ is a Private Record.
+      1. Return a value of type Reference whose base value is _baseValue_, whose referenced name is _privateRecord_, whose strict reference flag is *true*.
     </emu-alg>
   </emu-clause>
 </emu-clause>
