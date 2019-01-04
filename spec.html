@@ -397,10 +397,10 @@ emu-example pre {
 
   <emu-alg>
     1. Assert: Type ( _O_ ) is Object.
-    1. Assert: Assert _constructor_ is an ECMAScript function object.
+    1. Assert: _constructor_ is an ECMAScript function object.
     1. Let _fields_ be the value of _constructor_.[[Fields]].
     1. For each item _fieldRecord_ in order from _fields_,
-      1. Perform ? DefineField(_O_, _fields_).
+      1. Perform ? DefineField(_O_, _fieldRecord_).
     1. Return.
   </emu-alg>
   <emu-note type=editor>Private fields are added to the object one by one, interspersed with evaluation of the initializers, following the construction of the receiver. These semantics allow for a later initializer to refer to a previous private field.</emu-note>
