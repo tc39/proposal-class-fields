@@ -795,7 +795,7 @@ emu-example pre {
             1. Let _F_ be FunctionAllocate(_proto_, _strict_, _kind_).
             1. Let _realmF_ be _F_.[[Realm]].
             1. Let _scope_ be _realmF_.[[GlobalEnv]].
-            1. <ins>Let _privateScope_ be a new Lexical Environment.</ins>
+            1. <ins>Let _privateScope_ be NewDeclarativeEnvironment(*null*).</ins>
             1. Perform FunctionInitialize(_F_, ~Normal~, _parameters_, _body_, _scope_<ins>, _privateScope_</ins>).
             1. If _kind_ is `"generator"`, then
               1. Let _prototype_ be ObjectCreate(%GeneratorPrototype%).
@@ -843,7 +843,7 @@ emu-example pre {
           1. Else,
             1. Let _lexEnv_ be NewDeclarativeEnvironment(_evalRealm_.[[GlobalEnv]]).
             1. Let _varEnv_ be _evalRealm_.[[GlobalEnv]].
-            1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
+            1. <ins>Let _privateEnv_ be NewDeclarativeEnvironment(*null*).</ins>
           1. If _strictEval_ is *true*, set _varEnv_ to _lexEnv_.
           1. If _ctx_ is not already suspended, suspend _ctx_.
           1. Let _evalCxt_ be a new ECMAScript code execution context.
@@ -1004,7 +1004,7 @@ emu-example pre {
                     1. Call _envRec_.InitializeBinding(_dn_, *undefined*).
                     1. Append _dn_ to _declaredVarNames_.
               1. Let _lexDeclarations_ be the LexicallyScopedDeclarations of _code_.
-              1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
+              1. <ins>Let _privateEnv_ be NewDeclarativeEnvironment(*null*).</ins>
               1. For each element _d_ in _lexDeclarations_, do
                 1. For each element _dn_ of the BoundNames of _d_, do
                   1. If IsConstantDeclaration of _d_ is *true*, then
@@ -1966,7 +1966,7 @@ emu-example pre {
         1. Set the ScriptOrModule of _scriptCxt_ to _scriptRecord_.
         1. Set the VariableEnvironment of _scriptCxt_ to _globalEnv_.
         1. Set the LexicalEnvironment of _scriptCxt_ to _globalEnv_.
-        1. <ins>Let _privateEnv_ be a new Lexical Environment.</ins>
+        1. <ins>Let _privateEnv_ be NewDeclarativeEnvironment(*null*).</ins>
         1. <ins>Set the PrivateEnvironment of _scriptCxt_ to _privateEnv_.</ins>
         1. Suspend the currently running execution context.
         1. Push _scriptCxt_ on to the execution context stack; _scriptCxt_ is now the running execution context.
