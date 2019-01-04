@@ -258,3 +258,29 @@ alice.equals(bob); // false
 
 alice[Object.getOwnPropertySymbols(alice)[0]]; // == 0, which is alice's id.
 ```
+
+## How does this proposal relate to brand checks?
+
+This proposal only adds private fields to objects during constructors, and it includes errors for accessing private fields that don't exist. Some people have ascribed the term "brand check" to the combination of these properties, but there has been some confusion in the community about exactly which guarantees are provided. To clarify, the only guarantee that you have is that, **if a private field declared in a particular class exists on an instance, then that class's constructor has run against that instance.**
+
+For example, given the following class definitions:
+```js
+class F { #f; checkF() { this.#f; } }
+class G extends F { #g; checkG() { this.#g; } }
+```
+
+If an object `obj` doesn't throw in response to `F.prototype.checkF.call(obj)`, we know that `obj` was created from a `new F` call.
+
+By contrast, due to mutable prototype chains, we don't have all of that information about an object which doesn't throw from a call to `G.prototype.checkG.call(obj)`--all we know in this case was that, at some point, `new G` was called, and the super constructor returned `obj`. For example, this could be due to a clever case taking advantage of what's called the "super return trick":
+
+```js
+let obj = { };
+Object.setPrototypeOf(G, class { constructor() { return obj; });
+new G;
+Object.setPrototypeOf(G, F);
+G.prototype.checkG.call(obj);  // doesn't throw
+F.prototype.checkF.call(obj);  // throws
+```
+This weird phantom object `obj` has `G`'s "brand" and not `F`'s! This is not considered "broken", it's just that the nature of dynamic prototype chains for classes gives programmers the flexibility to do this sort of thing. Sometimes, it's more useful to have predictability than flexibility.
+
+This pattern can be prevented by preventing mutations to the prototype chain which is dynamically queried when constructing objects (as part of ES2015). For example, you can call `Object.preventExtensions(G)` to ensure that `G`'s superclass remains `F`. In this case, an object which doesn't throw in response to `checkG` will also have a private field `#f`.
