@@ -343,7 +343,9 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Assert: _argumentsList_ is empty.
-    1. Return the result of evaluating |AssignmentExpression|.
+    1. Let _exprRef_ be the result of evaluating |AssignmentExpression|.
+    1. Let _exprValue_ be ? GetValue(_exprRef_).
+    1. Return Completion { [[Type]]: ~return~, [[Value]]: _exprValue_, [[Target]]: ~empty~ }.
   </emu-alg>
   <emu-note>FunctionDeclarationInstantiation would not have any observable behaviour here, so its call is omitted.</emu-note>
 </emu-clause>
