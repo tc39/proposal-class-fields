@@ -127,10 +127,10 @@ For example, in the following example, `new D` would result in an object whose `
 
 ```js
 class C {
-  y = 1;
+  x = 1;
 }
 class D extends C {
-  y;
+  x;
 }
 ```
 
