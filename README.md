@@ -123,14 +123,14 @@ Public fields are [shipping](https://www.chromestatus.com/feature/60017279332515
 
 Both public and private field declarations create a field in the instance, whether or not there's an initializer present. If there's no initializer, the field is set to `undefined`. This differs a bit from certain transpiler implementations, which would just entirely ignore a field declaration which has no initializer.
 
-For example, in the following example, `new D` would result in an object whose `x` property is `undefined`, not `1`.
+For example, in the following example, `new D` would result in an object whose `y` property is `undefined`, not `1`.
 
 ```js
 class C {
-  x = 1;
+  y = 1;
 }
 class D extends C {
-  x;
+  y;
 }
 ```
 
