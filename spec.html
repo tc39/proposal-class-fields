@@ -276,11 +276,11 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _bindingName_ be StringValue of |PrivateIdentifier|.
-    1. Let _field_ be NewPrivateRecord(_bindingName_).
+    1. Let _fieldName_ be NewPrivateRecord(_bindingName_).
     1. Let _scope_ be the running execution context's PrivateEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
     1. Perform ! _scopeEnvRec_.InitializeBinding(_bindingName_, _field_).
-    1. Return _field_.
+    1. Return _fieldName_.
   </emu-alg>
   <emu-note type=editor>Each time a class declaration executes, distinct internal Private Records are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
@@ -1618,9 +1618,9 @@ emu-example pre {
           1. Let _base_ be ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
           1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
-          1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Record.</ins>
-          1. <ins>Return ? PrivateFieldGet(_field_, _base_).</ins>
+          1. <ins>Let _fieldName_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
+          1. <ins>Assert: _fieldName_ is a Private Record.</ins>
+          1. <ins>Return ? PrivateFieldGet(_fieldName_, _base_).</ins>
         1. Return ? _base_.[[Get]](GetReferencedName(_V_), GetThisValue(_V_)).
       1. Else _base_ must be an Environment Record,
         1. Return ? _base_.GetBindingValue(GetReferencedName(_V_), IsStrictReference(_V_)) (see <emu-xref href="#sec-environment-records"></emu-xref>).
@@ -1649,9 +1649,9 @@ emu-example pre {
           1. Set _base_ to ToObject(_base_).
         1. <ins>If IsPrivateReference(_V_), then</ins>
           1. <ins>Let _env_ be the running execution context's PrivateEnvironment.</ins>
-          1. <ins>Let _field_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
-          1. <ins>Assert: _field_ is a Private Record.</ins>
-          1. <ins>Perform ? PrivateFieldSet(_field_, _base_, _W_).</ins>
+          1. <ins>Let _fieldName_ be ? ResolveBinding(GetReferencedName(_V_), _env_).</ins>
+          1. <ins>Assert: _fieldName_ is a Private Record.</ins>
+          1. <ins>Perform ? PrivateFieldSet(_fieldName_, _base_, _W_).</ins>
         1. Else,
           1. Let _succeeded_ be ? _base_.[[Set]](GetReferencedName(_V_), _W_, GetThisValue(_V_)).
           1. If _succeeded_ is *false* and IsStrictReference(_V_) is *true*, throw a *TypeError* exception.
