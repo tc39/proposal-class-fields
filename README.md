@@ -212,6 +212,7 @@ Further implementations are on the way:
 
 You are encouraged to file issues and PRs this repository to
 - Ask questions about the proposal, how the syntax works, what the semantics mean, etc.
+- Discuss implementation and testing experience, and issues that arise out of that process.
 - Develop improved documentation, sample code, and other ways to introduce programmers at all levels to this feature.
 
 If you have any additional ideas on how to improve JavaScript, see ecma262's [CONTRIBUTING.md](https://github.com/tc39/ecma262/blob/master/CONTRIBUTING.md) for how to get involved.
