@@ -8,7 +8,7 @@
   "license": "SEE LICENSE IN https://tc39.github.io/ecma262/#sec-copyright-and-software-license",
   "homepage": "https://tc39.github.io/proposal-class-fields/",
   "scripts": {
-    "build": "ecmarkup spec.html rendered.html"
+    "build": "mkdir out && ecmarkup spec.html out/index.html"
   },
   "dependencies": {
     "ecmarkup": "^3.12.0"
