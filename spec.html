@@ -1481,7 +1481,7 @@ emu-example pre {
 
 <emu-note type=editor>
 <p>
-  Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, Private Names specifically do not have this connotation: because the reference from the Private Name value to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the Private Name value.
+  Private fields are designed to have semantics analogous to WeakMaps. However, the implied garbage collection semantics are weaker: If all the references to a WeakMap are inaccessible, but there is still a reference to a key which was in the WeakMap, one would expect the value to be eventually collected. However, Private Names specifically do not have this connotation: because the reference from the Private Name to the Value is in a Record which the Object points to, the value would not be collected, even if nothing else points to the Private Name.
 </p>
 <p>
   Private Names are a specification type here, not directly observable to ECMAScript code. However, in <a href="https://github.com/tc39/proposal-private-fields/blob/master/DECORATORS.md">a decorator integration strawman</a>, an object wrapping Private Names would be exposed to allow greater metaprogramming.
@@ -1503,14 +1503,14 @@ emu-example pre {
 <emu-clause id="sec-newprivatename" aoid="NewPrivateName">
   <h1>NewPrivateName ( _description_ )</h1>
   <emu-alg>
-    1. Return a new unique Private Name value whose [[Description]] value is _description_.
+    1. Return a new unique Private Name whose [[Description]] value is _description_.
   </emu-alg>
 </emu-clause>
 
 <emu-clause id="sec-privatefieldfind" aoid="PrivateFieldFind">
   <h1>PrivateFieldFind (_P_, _O_)</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Name.
     1. Assert: _O_ is an object with a [[PrivateFieldValues]] internal slot.
     1. For each element _entry_ in _O_.[[PrivateFieldValues]],
       1. If _entry_.[[PrivateName]] is _P_, return _entry_.
@@ -1521,7 +1521,7 @@ emu-example pre {
 <emu-clause id="sec-privatefieldadd" aoid="PrivateFieldAdd">
   <h1>PrivateFieldAdd (_P_, _O_, _value_)</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Name.
     1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is not ~empty~, throw a *TypeError* exception.
@@ -1532,7 +1532,7 @@ emu-example pre {
 <emu-clause id="sec-privatefieldget" aoid="PrivateFieldGet">
   <h1>PrivateFieldGet (_P_, _O_ )</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Name.
     1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
@@ -1543,7 +1543,7 @@ emu-example pre {
 <emu-clause id="sec-privatefieldset" aoid="PrivateFieldSet">
   <h1>PrivateFieldSet (_P_, _O_, _value_ )</h1>
   <emu-alg>
-    1. Assert: _P_ is a Private Name value.
+    1. Assert: _P_ is a Private Name.
     1. Assert: Type(_O_) is Object.
     1. Let _entry_ be PrivateFieldFind(_P_, _O_).
     1. If _entry_ is ~empty~, throw a *TypeError* exception.
