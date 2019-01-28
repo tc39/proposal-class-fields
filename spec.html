@@ -207,6 +207,8 @@ emu-example pre {
       <li>It is a Syntax Error if AllPrivateIdentifiersValid of |ModuleItemList| with an empty List as an argument is *false*.</li>
     </ul>
     <emu-note type=editor>References to |PrivateIdentifier|s which are not lexically present cause an early error.</emu-note>
+  </emu-clause>
+
   <emu-clause id="sec-all-private-identifiers-valid" aoid="AllPrivateIdentifiersValid" oldids="sec-all-private-names-valid">
     <h1>Static Semantics: AllPrivateIdentifiersValid</h1>
     AllPrivateIdentifiersValid is an abstract operation which takes _names_ as an argument.
@@ -229,9 +231,9 @@ emu-example pre {
     </emu-alg>
 
     For all other grammatical productions, recurse on subexpressions/substatements, passing in the _names_ of the caller. If all pieces return *true*, then return *true*. If any returns *false*, return *false*.
-  <emu-note type=editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
+    <emu-note type=editor>TODO: Elaborate the preceding paragraph with spec text inserted in each relevant place</emu-note>
   </emu-clause>
-  </emu-clause>
+
 </emu-clause>
 
 
