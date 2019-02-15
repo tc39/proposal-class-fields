@@ -151,6 +151,8 @@ class X {
 
 This syntax tries to be both terse and intuitive, although it's rather different from other programming languages. See [the private syntax FAQ](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md) for discussion of alternatives considered and the constraints that led to this syntax.
 
+There are no private computed property names: `#foo` is a private identifier, and `#[foo]` is a syntax error.
+
 ### No backdoor to access private
 
 Private fields provide a strong encapsulation boundary: It's impossible to access the private field from outside of the class, unless there is some explicit code to expose it (for example, providing a getter). This differs from JavaScript properties, which support various kinds of reflection and metaprogramming, and is instead analogous to mechanisms like closures and `WeakMap`, which don't provide access to their internals. See [these FAQ entries](https://github.com/tc39/proposal-class-fields/blob/master/PRIVATE_SYNTAX_FAQ.md#why-doesnt-this-proposal-allow-some-mechanism-for-reflecting-on--accessing-private-fields-from-outside-the-class-which-declares-them-eg-for-testing-dont-other-languages-normally-allow-that) for more information on the motivation for this decision.
@@ -158,6 +160,18 @@ Private fields provide a strong encapsulation boundary: It's impossible to acces
 Some mitigations which make it easier to access
 - Implementations' developer tools may provide access to private fields ([V8 issue](https://bugs.chromium.org/p/v8/issues/detail?id=8337)).
 - The [decorators proposal](https://github.com/tc39/proposal-decorators/) gives tools for easy-to-use and controlled access to private fields.
+
+### Execution of initializer expressions
+
+Public and private fields are each added to the instance in the order of their declarations, while the constructor is running. The initializer is newly evaluated for each class instance. Fields are added to the instance right after the initializer runs, and before evaluating the following initializer.
+
+**Scope**: The instance under construction is in scope as the `this` value inside the initializer expression. `new.target` is undefined, as in methods. References to `arguments` are an early error. Super method calls `super.method()` are available within initializers, but super constructor calls `super()` are a syntax error. `await` and `yield` are unavailable in initializers, even if the class is declared inside an async function/genenerator.
+
+When field initializers are evaluated and fields are added to instances:
+- **Base class**: At the beginning of the constructor execution, even before parameter destructuring.
+- **Derived class**: Right after `super()` returns. (The flexibility in how `super()` can be called has led many implementations to make a separate invisible `initialize()` method for this case.)
+
+If `super()` is not called in a derived class, and instead some other  public and private fields are not added to the instance, and initializers are not evaluated. For base classes, initializers are always evaluated, even if the constructor ends up returning something else. The [`new.initialize`](https://github.com/littledan/proposal-new-initialize) proposal would add a way to programmatically add fields to an instance which doesn't come from `super()`/the `this` value in the base class.
 
 ## Specification
 
