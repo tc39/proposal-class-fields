@@ -215,6 +215,7 @@ You can experiment with the class fields proposal using the following complete i
 - Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
 - Public fields are [enabled by default](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
 - Private fields are [enabled by default](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
+- Instance class fields are [available under flag](https://bugzilla.mozilla.org/show_bug.cgi?id=1529758) in Firefox 67
 
 Further implementations are on the way:
 
