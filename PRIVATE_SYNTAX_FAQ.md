@@ -289,7 +289,7 @@ This pattern can be prevented by preventing mutations to the prototype chain whi
 
 Private fields of a Proxy target aren't accessible from the Proxy itself. For example, the following will throw a TypeError:
 ```js
-class K { #x; get x() { return this.x; } }
+class K { #x; get x() { return this.#x; } }
 let k = new Proxy(new K, { });
 k.x  // TypeError
 ```
