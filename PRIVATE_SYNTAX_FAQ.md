@@ -310,8 +310,8 @@ class Trick extends Super {
 let target = { };
 let proxy = new Proxy(target, { });
 new Trick(proxy);
-Trick.prototype.checkX(proxy);   // No exception thrown
-Trick.prototype.checkX(target);  // TypeError
+Trick.prototype.checkX.call(proxy);   // No exception thrown
+Trick.prototype.checkX.call(target);  // TypeError
 ```
 
 One way to handle the lack of forwarding to Proxy targets is to use a membrane pattern, e.g., as in [Salesforce's Observable Membrane](https://github.com/salesforce/observable-membrane).
