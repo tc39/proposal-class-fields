@@ -213,6 +213,7 @@ This proposal has been developed in this GitHub repository as well as in present
 You can experiment with the class fields proposal using the following complete implementations:
 
 - Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
+- [Node 12](https://nodejs.org/en/blog/release/v12.0.0/)
 - Public fields are [enabled by default](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
 - Private fields are [enabled by default](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
 - [Partial, in-progress support](https://bugzilla.mozilla.org/show_bug.cgi?id=1529758) in Firefox 67
