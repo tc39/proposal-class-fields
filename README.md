@@ -165,7 +165,7 @@ Some mitigations which make it easier to access
 
 Public and private fields are each added to the instance in the order of their declarations, while the constructor is running. The initializer is newly evaluated for each class instance. Fields are added to the instance right after the initializer runs, and before evaluating the following initializer.
 
-**Scope**: The instance under construction is in scope as the `this` value inside the initializer expression. `new.target` is undefined, as in methods. References to `arguments` are an early error. Super method calls `super.method()` are available within initializers, but super constructor calls `super()` are a syntax error. `await` and `yield` are unavailable in initializers, even if the class is declared inside an async function/genenerator.
+**Scope**: The instance under construction is in scope as the `this` value inside the initializer expression. `new.target` is undefined, as in methods. References to `arguments` are an early error. Super method calls `super.method()` are available within initializers, but super constructor calls `super()` are a syntax error. `await` and `yield` are unavailable in initializers, even if the class is declared inside an async function/generator.
 
 When field initializers are evaluated and fields are added to instances:
 - **Base class**: At the beginning of the constructor execution, even before parameter destructuring.
