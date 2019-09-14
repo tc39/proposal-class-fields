@@ -218,6 +218,7 @@ You can experiment with the class fields proposal using the following complete i
 - Private fields are [enabled by default](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
 - Public instance fields are [enabled by default](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
 - [Moddable XS](https://blog.moddable.com/blog/secureprivate/)
+- [QuickJS](https://www.freelists.org/post/quickjs-devel/New-release,82)
 
 Further implementations are on the way:
 
