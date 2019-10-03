@@ -278,11 +278,9 @@ emu-example pre {
   </emu-grammar>
   <emu-alg>
     1. Let _privateIdentifier_ be StringValue of |PrivateIdentifier|.
-    1. Let _privateName_ be NewPrivateName(_privateIdentifier_).
     1. Let _scope_ be the running execution context's PrivateEnvironment.
     1. Let _scopeEnvRec_ be _scope_'s EnvironmentRecord.
-    1. Perform ! _scopeEnvRec_.InitializeBinding(_privateIdentifier_, _privateName_).
-    1. Return _privateName_.
+    1. Return _scopeEnvRec_.GetBindingValue(_bindingName_).
   </emu-alg>
   <emu-note type=editor>Each time a class declaration executes, distinct internal Private Names are created. This means, that they cannot directly access each other's private state if a method of one is called with the other as a receiver.</emu-note>
 
@@ -587,6 +585,8 @@ emu-example pre {
       1. <ins>If |ClassBody_opt| is present, then</ins>
         1. <ins>For each element _dn_ of the PrivateBoundIdentifiers of |ClassBody_opt|,</ins>
           1. <ins>Perform _classPrivateEnvRec_.CreateImmutableBinding(_dn_, *true*).</ins>
+          1. <ins>Let _privateName_ be NewPrivateName(_dn_).</ins>
+          1. <ins>Perform ! _classPrivateEnvRec_.InitializeBinding(_dn_, _dn_).</ins>
       1. If |ClassHeritage_opt| is not present, then
         1. Let _protoParent_ be the intrinsic object %ObjectPrototype%.
         1. Let _constructorParent_ be the intrinsic object %FunctionPrototype%.
