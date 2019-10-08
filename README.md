@@ -207,6 +207,7 @@ This proposal has been developed in this GitHub repository as well as in present
 | November 2017  | [ASI in class field declarations](https://docs.google.com/presentation/d/1bPzE6i_Bpm6FXgzfx9XFJNHGkVcM42lux-6bUNhxpl4/edit#slide=id.p)                        | [📝](https://github.com/tc39/tc39-notes/blob/master/es8/2017-11/nov-30.md#10ivf-class-fields-asi-discussion-and-resolution)                                   |
 | May 2018       | [Class fields: Stage 3 status update](https://docs.google.com/presentation/d/1oDQOS9b8wnuP5-o8zInsEO9lpRbhduawAmvfRzbxkOs/edit?usp=sharing)                   | [📝](https://github.com/tc39/tc39-notes/blob/master/es9/2018-05/may-23.md#class-fields-status-update)                                                         |
 | September 2018 | [Class fields and private methods: Stage 3 update](https://docs.google.com/presentation/d/1Q9upYkWnPjJaVc8k9q3U6NekDch8tsz7CgV-Xm55-5Y/edit#slide=id.p)       | [📝](https://github.com/tc39/tc39-notes/blob/master/es9/2018-09/sept-26.md#class-fields-and-private-methods-stage-3-update)                                   |
+| January 2019   | [Private fields and methods refresher](https://docs.google.com/presentation/d/1lPEfTLk_9jjjcjJcx0IAKoaq10mv1XrTZ-pgERG5YoM/edit#slide=id.p) | [📝](https://github.com/tc39/tc39-notes/blob/master/meetings/2019-01/jan-30.md#private-fields-and-methods-refresher) |
 
 ### Implementations
 
