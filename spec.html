@@ -586,7 +586,7 @@ emu-example pre {
         1. <ins>For each element _dn_ of the PrivateBoundIdentifiers of |ClassBody_opt|,</ins>
           1. <ins>Perform _classPrivateEnvRec_.CreateImmutableBinding(_dn_, *true*).</ins>
           1. <ins>Let _privateName_ be NewPrivateName(_dn_).</ins>
-          1. <ins>Perform ! _classPrivateEnvRec_.InitializeBinding(_dn_, _dn_).</ins>
+          1. <ins>Perform ! _classPrivateEnvRec_.InitializeBinding(_dn_, _privateName_).</ins>
       1. If |ClassHeritage_opt| is not present, then
         1. Let _protoParent_ be the intrinsic object %ObjectPrototype%.
         1. Let _constructorParent_ be the intrinsic object %FunctionPrototype%.
