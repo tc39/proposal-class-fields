@@ -220,10 +220,10 @@ You can experiment with the class fields proposal using the following complete i
 - Public instance fields are [enabled by default](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
 - [Moddable XS](https://blog.moddable.com/blog/secureprivate/)
 - [QuickJS](https://www.freelists.org/post/quickjs-devel/New-release,82)
+- [TypeScript 3.8](https://devblogs.microsoft.com/typescript/announcing-typescript-3-8/#ecmascript-private-fields)
 
 Further implementations are on the way:
 
-- [In progress](https://github.com/microsoft/TypeScript/pull/30829) in TypeScript
 - [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in Safari/JSC
 - [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox/SpiderMonkey
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
