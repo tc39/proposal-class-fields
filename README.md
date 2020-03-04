@@ -218,13 +218,14 @@ You can experiment with the class fields proposal using the following complete i
 - Public fields are [enabled by default](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
 - Private fields are [enabled by default](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
 - Public instance fields are [enabled by default](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
+- Public instance fields are shipped [behind a flag](https://trac.webkit.org/changeset/254653/webkit) in Safari Technology Preview 101
 - [Moddable XS](https://blog.moddable.com/blog/secureprivate/)
 - [QuickJS](https://www.freelists.org/post/quickjs-devel/New-release,82)
 - [TypeScript 3.8](https://devblogs.microsoft.com/typescript/announcing-typescript-3-8/#ecmascript-private-fields)
 
 Further implementations are on the way:
 
-- [Out for review](https://bugs.webkit.org/show_bug.cgi?id=174212) in Safari/JSC
+- [Private instance fields](https://bugs.webkit.org/show_bug.cgi?id=206431), [private instance methods](https://bugs.webkit.org/show_bug.cgi?id=194434), [private instance accessors](https://bugs.webkit.org/show_bug.cgi?id=194435) and [static fields](https://bugs.webkit.org/show_bug.cgi?id=194095) in Webkit
 - [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox/SpiderMonkey
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
