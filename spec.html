@@ -142,6 +142,18 @@ emu-example pre {
         CallExpression[?Yield, ?Await] `.` IdentifierName
         CallExpression[?Yield, ?Await] TemplateLiteral[?Yield, ?Await]
         <ins>CallExpression[?Yield, ?Await] `.` PrivateIdentifier</ins>
+
+      OptionalChain[Yield, Await] :
+        `?.` `[` Expression[+In, ?Yield, ?Await] `]`
+        `?.` IdentifierName
+        `?.` Arguments[?Yield, ?Await]
+        `?.` TemplateLiteral[?Yield, ?Await, +Tagged]
+        <ins>`?.` PrivateIdentifier</ins>
+        OptionalChain[?Yield, ?Await]  `[` Expression[+In, ?Yield, ?Await] `]`
+        OptionalChain[?Yield, ?Await] `.` IdentifierName
+        OptionalChain[?Yield, ?Await] Arguments[?Yield, ?Await]
+        OptionalChain[?Yield, ?Await] TemplateLiteral[?Yield, ?Await, +Tagged]
+        <ins>OptionalChain[?Yield, ?Await] `.` PrivateIdentifier</ins>
     </emu-grammar>
   </emu-clause>
 
@@ -183,7 +195,7 @@ emu-example pre {
     <emu-grammar>UnaryExpression : `delete` UnaryExpression</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>, or <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar></ins>.
+        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalChain : `?.` PrivateIdentifier</emu-grammar>, or <emu-grammar>OptionalChain : OptionalChain `.` PrivateIdentifier</emu-grammar></ins>.
       </li>
       <li>
         <p>It is a Syntax Error if the derived |UnaryExpression| is
@@ -219,6 +231,18 @@ emu-example pre {
     </emu-alg>
 
     <emu-grammar>CallExpression[Yield, Await] : CallExpression[?Yield, ?Await] `.` PrivateIdentifier</emu-grammar>
+    <emu-alg>
+      1. If StringValue of |PrivateIdentifier| is in _names_, return *true*.
+      1. Return *false*.
+    </emu-alg>
+
+    <emu-grammar>OptionalChain[Yield, Await] : `?.` PrivateIdentifier</emu-grammar>
+    <emu-alg>
+      1. If StringValue of |PrivateIdentifier| is in _names_, return *true*.
+      1. Return *false*.
+    </emu-alg>
+
+    <emu-grammar>OptionalChain[Yield, Await] : OptionalChain[?Yield, ?Await] `.` PrivateIdentifier</emu-grammar>
     <emu-alg>
       1. If StringValue of |PrivateIdentifier| is in _names_, return *true*.
       1. Return *false*.
@@ -1541,6 +1565,27 @@ emu-example pre {
     1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
     1. Let _fieldNameString_ be the StringValue of |PrivateIdentifier|.
     1. Return MakePrivateReference(_bv_, _fieldNameString_).
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-private-references-runtime-semantics-chainevaluation">
+  <h1>Runtime Semantics: ChainEvaluation</h1>
+  <p>With parameters _baseValue_ and _baseReference_.</p>
+  <emu-grammar>OptionalChain : `?.` PrivateIdentifier</emu-grammar>
+  <emu-alg>
+    1. Let _bv_ be ? RequireObjectCoercible(_baseValue_).
+    1. Let _fieldNameString_ be the StringValue of |PrivateIdentifier|.
+    1. Return MakePrivateReference(_bv_, _fieldNameString_).
+  </emu-alg>
+
+  <emu-grammar>OptionalChain : OptionalChain `.` PrivateIdentifier</emu-grammar>
+  <emu-alg>
+    1. Let _optionalChain_ be |OptionalChain|.
+    1. Let _newReference_ be ? ChainEvaluation of _optionalChain_ with arguments _baseValue_ and _baseReference_.
+    1. Let _newValue_ be ? GetValue(_newReference_).
+    1. Let _nv_ be ? RequireObjectCoercible(_newValue_).
+    1. Let _fieldNameString_ be the StringValue of |PrivateIdentifier|.
+    1. Return MakePrivateReference(_nv_, _fieldNameString_).
   </emu-alg>
 </emu-clause>
 
