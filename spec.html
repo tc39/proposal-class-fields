@@ -400,7 +400,7 @@ emu-example pre {
     <emu-alg>
     1. Assert: Type(_receiver_) is Object.
     1. Assert: _fieldRecord_ is a Record as created by ClassFieldDefinitionEvaluation.
-    1. Let _name_ be _fieldRecord_.[[Name]].
+    1. Let _fieldName_ be _fieldRecord_.[[Name]].
     1. Let _initializer_ be _fieldRecord_.[[Initializer]].
     1. If _initializer_ is not ~empty~, then
       1. Let _initValue_ be ? Call(_initializer_, _receiver_).
