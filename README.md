@@ -211,23 +211,27 @@ This proposal has been developed in this GitHub repository as well as in present
 
 ### Implementations
 
-You can experiment with the class fields proposal using the following complete implementations:
+You can experiment with the class fields proposal using the following implementations:
 
 - Babel [7.0+](https://babeljs.io/blog/2018/08/27/7.0.0#tc39-proposals-https-githubcom-tc39-proposals-support)
 - [Node 12](https://nodejs.org/en/blog/release/v12.0.0/)
-- Public fields are [enabled by default](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
-- Private fields are [enabled by default](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
-- Public instance fields are [enabled by default](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
-- Public static fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1535804) in Firefox Nightly 75 as of February 22, 2020
-- Public instance fields are shipped [behind a flag](https://trac.webkit.org/changeset/254653/webkit) in Safari Technology Preview 101
+- Chrome/V8
+  - Public fields are [enabled](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
+  - Private fields are [enabled](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
+- Firefox/SpiderMonkey
+  - Public instance fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
+  - Public static fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1535804) in Firefox 75
+- Safari/JSC
+  - Public instance fields are [enabled](https://trac.webkit.org/changeset/254653/webkit) in Safari 14 Beta
+  - Private instance fields are [behind a flag](https://bugs.webkit.org/show_bug.cgi?id=206431) in Safari Technology Preview 109
 - [Moddable XS](https://blog.moddable.com/blog/secureprivate/)
 - [QuickJS](https://www.freelists.org/post/quickjs-devel/New-release,82)
 - [TypeScript 3.8](https://devblogs.microsoft.com/typescript/announcing-typescript-3-8/#ecmascript-private-fields)
 
 Further implementations are on the way:
 
-- [Private instance fields](https://bugs.webkit.org/show_bug.cgi?id=206431), [private instance methods](https://bugs.webkit.org/show_bug.cgi?id=194434), [private instance accessors](https://bugs.webkit.org/show_bug.cgi?id=194435) and [static fields](https://bugs.webkit.org/show_bug.cgi?id=194095) in Webkit
-- [Private instance fields](https://bugzilla.mozilla.org/show_bug.cgi?id=1562054) and [private instance methods and accessors](https://bugzilla.mozilla.org/show_bug.cgi?id=1435826) tracking issues in Firefox/SpiderMonkey Bugzilla
+- Safari/JSC: [private instance methods](https://bugs.webkit.org/show_bug.cgi?id=194434), [private instance accessors](https://bugs.webkit.org/show_bug.cgi?id=194435) and [static fields](https://bugs.webkit.org/show_bug.cgi?id=194095)
+- Firefox/SpiderMonkey: [Private instance fields](https://bugzilla.mozilla.org/show_bug.cgi?id=1562054) and [private instance methods and accessors](https://bugzilla.mozilla.org/show_bug.cgi?id=1435826)
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
 ### Activity welcome in this repository
