@@ -220,7 +220,6 @@ You can experiment with the class fields proposal using the following implementa
   - Private fields are [enabled](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
 - Firefox/SpiderMonkey
   - Public instance fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
-  - Public static fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1535804) in Firefox 75
 - Safari/JSC
   - Public instance fields are [enabled](https://trac.webkit.org/changeset/254653/webkit) in Safari 14 Beta
   - Private instance fields are [behind a flag](https://bugs.webkit.org/show_bug.cgi?id=206431) in Safari Technology Preview 109
@@ -230,8 +229,7 @@ You can experiment with the class fields proposal using the following implementa
 
 Further implementations are on the way:
 
-- Safari/JSC: [private instance methods](https://bugs.webkit.org/show_bug.cgi?id=194434), [private instance accessors](https://bugs.webkit.org/show_bug.cgi?id=194435) and [static fields](https://bugs.webkit.org/show_bug.cgi?id=194095)
-- Firefox/SpiderMonkey: [Private instance fields](https://bugzilla.mozilla.org/show_bug.cgi?id=1562054) and [private instance methods and accessors](https://bugzilla.mozilla.org/show_bug.cgi?id=1435826)
+- Firefox/SpiderMonkey: [Private instance fields](https://bugzilla.mozilla.org/show_bug.cgi?id=1562054)
 - [Additional tooling support](https://github.com/tc39/proposal-class-fields/issues/57)
 
 ### Activity welcome in this repository
