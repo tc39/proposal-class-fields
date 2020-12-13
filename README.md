@@ -219,10 +219,12 @@ You can experiment with the class fields proposal using the following implementa
   - Public fields are [enabled](https://www.chromestatus.com/feature/6001727933251584) in Chrome 72 / V8 7.2
   - Private fields are [enabled](https://www.chromestatus.com/feature/6035156464828416) in Chrome 74 / V8 7.4
 - Firefox/SpiderMonkey
-  - Public instance fields are [enabled](https://bugzilla.mozilla.org/show_bug.cgi?id=1499448) in Firefox 69
+  - Public instance fields are [enabled](https://wiki.developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/69#JavaScript) in Firefox 69
+  - Public static fields are [enabled](https://wiki.developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/75#JavaScript) in Firefox 75
 - Safari/JSC
-  - Public instance fields are [enabled](https://trac.webkit.org/changeset/254653/webkit) in Safari 14 Beta
-  - Private instance fields are [behind a flag](https://bugs.webkit.org/show_bug.cgi?id=206431) in Safari Technology Preview 109
+  - Public instance fields are [enabled](https://developer.apple.com/documentation/safari-release-notes/safari-14-release-notes#JavaScript) in Safari 14
+  - Public static fields are [enabled](https://webkit.org/blog/11364/release-notes-for-safari-technology-preview-117/) in Safari Technology Preview 117
+  - Private fields are [enabled](https://webkit.org/blog/11364/release-notes-for-safari-technology-preview-117/) in Safari Technology Preview 117
 - [Moddable XS](https://blog.moddable.com/blog/secureprivate/)
 - [QuickJS](https://www.freelists.org/post/quickjs-devel/New-release,82)
 - [TypeScript 3.8](https://devblogs.microsoft.com/typescript/announcing-typescript-3-8/#ecmascript-private-fields)
