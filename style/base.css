@@ -1,0 +1,72 @@
+body {
+    overflow-y: scroll;
+}
+
+header {
+    padding-top: 8px;
+    background: rgb(243,255,236);
+    background: linear-gradient(147deg,
+                                rgba(243,255,236,0.4) 29%,
+                                rgba(236,243,252,0.4) 65%,
+                                rgba(248,241,255,0.4) 82%);
+}
+
+body > div {
+    width: 100%;
+}
+
+header h1 {
+    font-size: 1.2em;
+    margin: 0;
+    text-align: center;
+    padding: 0 40px;
+}
+
+header nav {
+    text-align: center;
+    padding: 0 40px;
+}
+
+header nav a {
+    font-size: 0.8em;
+    font-weight: bold;
+    font-family: sans-self;
+    margin-right: 20px;
+}
+
+#github-link {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    opacity: 0.3;
+}
+
+#logo {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+}
+
+.logo-img {
+    width: 32px;
+    height: 32px;
+}
+
+/* ==== round button ==== */
+
+.round-button {
+    color: rgb(185,115,255);
+    font-weight: bold;
+    border-radius: 8px;
+    border: 2px solid rgb(185,115,255);
+    background-color: #ffffff !important;
+    padding: 2px;
+    margin-inline-start: 8px;
+}
+
+.round-button:hover {
+    transform: scale(1.05);
+}
+.round-button:active {
+    transform: scale(0.95);
+}
