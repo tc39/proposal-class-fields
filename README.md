@@ -2,7 +2,7 @@
 
 Daniel Ehrenberg, Jeff Morrison
 
-[Stage 3](https://tc39.es/process-document/)
+[Stage 4](https://tc39.es/process-document/)
 
 ## A guiding example: Custom elements with classes
 
