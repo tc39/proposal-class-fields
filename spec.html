@@ -1698,7 +1698,7 @@ emu-example pre {
     <h1>MakePrivateReference ( _baseValue_, _privateIdentifier_ )</h1>
     <emu-alg>
       1. Let _env_ be the running execution context's PrivateEnvironment.</ins>
-      1. Let _privateNameBinding_ be ? ResolveBinding(_privateIdentifier_, _env_).</ins>
+      1. Let _privateNameBinding_ be ! ResolveBinding(_privateIdentifier_, _env_).</ins>
       1. Let _privateName_ be GetValue(_privateNameBinding_).
       1. Assert: _privateName_ is a Private Name.
       1. Return a value of type Reference whose base value is _baseValue_, whose referenced name is _privateName_, whose strict reference flag is *true*.
