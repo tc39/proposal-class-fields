@@ -198,7 +198,7 @@ emu-example pre {
     <emu-grammar>UnaryExpression : `delete` UnaryExpression</emu-grammar>
     <ul>
       <li>
-        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalChain : `?.` PrivateIdentifier</emu-grammar>, or <emu-grammar>OptionalChain : OptionalChain `.` PrivateIdentifier</emu-grammar></ins>.
+        It is a Syntax Error if the |UnaryExpression| is contained in strict mode code and the derived |UnaryExpression| is <emu-grammar>PrimaryExpression : IdentifierReference</emu-grammar>, <ins><emu-grammar>MemberExpression : MemberExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>CallExpression : CallExpression `.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalExpression : MemberExpression `?.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalExpression : CallExpression `?.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalExpression : OptionalExpression `?.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalExpression : MemberExpression OptionalChain `.` PrivateIdentifier</emu-grammar>, <emu-grammar>OptionalExpression : CallExpression OptionalChain `.` PrivateIdentifier</emu-grammar>, or <emu-grammar>OptionalExpression : OptionalExpression OptionalChain `.` PrivateIdentifier</emu-grammar></ins>.
       </li>
       <li>
         <p>It is a Syntax Error if the derived |UnaryExpression| is
